@@ -1,6 +1,6 @@
 # T013 - Test Time Format
 
-Status: READY
+Status: DONE
 
 ## Goal
 

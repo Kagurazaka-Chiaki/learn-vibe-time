@@ -1,6 +1,6 @@
 # Batch 004 - Tests
 
-Status: READY
+Status: DONE
 
 ## Mode
 
@@ -50,4 +50,8 @@ Stop when tests pass and tasks are done, dependency install is unavailable, or f
 
 ## Completion Notes
 
-To be filled after execution.
+Completed on 2026-04-29.
+
+- Added Vitest and scripts for `typecheck`, `test`, and `test:watch`.
+- Added domain tests for date/time formatting, solar calculations, and sync state helpers.
+- Checks run: `bun install`, `bun run typecheck`, `bun run test`, `bun run build`.

@@ -1,6 +1,6 @@
 # T015 - Test Sync State
 
-Status: READY
+Status: DONE
 
 ## Goal
 

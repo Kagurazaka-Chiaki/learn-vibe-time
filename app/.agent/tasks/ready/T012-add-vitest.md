@@ -1,6 +1,6 @@
 # T012 - Add Vitest
 
-Status: READY
+Status: DONE
 
 ## Goal
 

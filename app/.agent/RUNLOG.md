@@ -24,6 +24,41 @@ Notes:
 
 ## Entries
 
+### 2026-04-29 - T012/T015 domain tests
+
+Status: DONE
+
+Modified files:
+- `package.json`
+- `bun.lock`
+- `src/domain/timeFormat.test.ts`
+- `src/domain/solar.test.ts`
+- `src/domain/sync.test.ts`
+- `.agent/STATE.md`
+- `.agent/RUNLOG.md`
+- `.agent/tasks/ready/T012-add-vitest.md`
+- `.agent/tasks/ready/T013-test-time-format.md`
+- `.agent/tasks/ready/T014-test-solar-domain.md`
+- `.agent/tasks/ready/T015-test-sync-state.md`
+- `.agent/batches/ready/batch-004-tests.md`
+
+Checks run:
+- `bun install`
+- `bun run typecheck`
+- `bun run test`
+- `bun run build`
+- `git status --short`
+
+Result:
+- Added Vitest 3.2.4 and package scripts for typecheck and tests.
+- Added 10 passing tests across time formatting, solar calculations, and sync state helpers.
+- Updated `bun.lock`.
+- `bun run typecheck`, `bun run test`, and `bun run build` passed.
+
+Notes:
+- No React component test dependency was added.
+- Checkpoint commit planned: `test(app): cover clock domain logic`.
+
 ### 2026-04-29 - T008/T011 Rust time sync
 
 Status: DONE

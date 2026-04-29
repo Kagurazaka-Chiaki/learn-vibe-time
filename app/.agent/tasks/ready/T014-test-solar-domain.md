@@ -1,6 +1,6 @@
 # T014 - Test Solar Domain
 
-Status: READY
+Status: DONE
 
 ## Goal
 
