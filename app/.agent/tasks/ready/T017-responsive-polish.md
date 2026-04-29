@@ -1,6 +1,6 @@
 # T017 - Responsive Polish
 
-Status: READY
+Status: DONE
 
 ## Goal
 

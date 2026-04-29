@@ -1,9 +1,9 @@
 # Agent State
 
-Current batch: `.agent/batches/ready/batch-005-desktop-polish.md`
+Current batch: `.agent/batches/ready/batch-006-preferences.md`
 Current task: none
-Last successful task: T015
-Last run: 2026-04-29 T015 domain tests
+Last successful task: T018
+Last run: 2026-04-29 T018 desktop polish
 
 ## Mode
 
@@ -21,8 +21,8 @@ Last run: 2026-04-29 T015 domain tests
 This harness controls the `app/` project. The sibling `../iota-agnt01/`
 submodule remains a reference source for templates and policy language.
 
-The next active batch is the desktop polish batch. Execute only tasks listed by
-`.agent/batches/ready/batch-005-desktop-polish.md` unless the user gives a new
+The next active batch is the preferences batch. Execute only tasks listed by
+`.agent/batches/ready/batch-006-preferences.md` unless the user gives a new
 explicit scope.
 
 Update this file only with factual execution state.

@@ -24,6 +24,40 @@ Notes:
 
 ## Entries
 
+### 2026-04-29 - T016/T018 desktop polish
+
+Status: DONE
+
+Modified files:
+- `src-tauri/tauri.conf.json`
+- `src-tauri/Cargo.toml`
+- `src/components/ClockDisplay.tsx`
+- `src/components/SyncStatus.tsx`
+- `src/styles/clock.css`
+- `.agent/STATE.md`
+- `.agent/RUNLOG.md`
+- `.agent/tasks/ready/T016-rename-tauri-app.md`
+- `.agent/tasks/ready/T017-responsive-polish.md`
+- `.agent/tasks/ready/T018-accessibility-pass.md`
+- `.agent/batches/ready/batch-005-desktop-polish.md`
+
+Checks run:
+- `bun run build`
+- `cargo check`
+- `git status --short`
+
+Result:
+- Renamed the desktop app metadata to `Clean Time`.
+- Set a more suitable default and minimum Tauri window size.
+- Improved responsive clock and city rail sizing.
+- Added semantic clock/status markup and focus-visible city button behavior.
+- `bun run build` and `cargo check` passed.
+
+Notes:
+- No icon regeneration was performed.
+- `cargo check` needed escalated filesystem permission to write under `src-tauri/target`.
+- Checkpoint commit planned: `feat(app): polish desktop clock shell`.
+
 ### 2026-04-29 - T012/T015 domain tests
 
 Status: DONE

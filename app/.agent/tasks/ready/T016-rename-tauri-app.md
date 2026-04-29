@@ -1,6 +1,6 @@
 # T016 - Rename Tauri App
 
-Status: READY
+Status: DONE
 
 ## Goal
 

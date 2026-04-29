@@ -1,6 +1,6 @@
 # T018 - Accessibility Pass
 
-Status: READY
+Status: DONE
 
 ## Goal
 

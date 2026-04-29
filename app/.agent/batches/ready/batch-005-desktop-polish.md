@@ -1,6 +1,6 @@
 # Batch 005 - Desktop Polish
 
-Status: READY
+Status: DONE
 
 ## Mode
 
@@ -48,4 +48,10 @@ Stop when listed tasks are done or blocked, or visual polish requires manual des
 
 ## Completion Notes
 
-To be filled after execution.
+Completed on 2026-04-29.
+
+- Renamed the Tauri product/window title to `Clean Time`.
+- Set desktop window size to `1100x720` with `720x480` minimum size.
+- Updated Cargo description.
+- Improved responsive clock sizing, city card sizing, focus style, and semantic clock/status markup.
+- Checks run: `bun run build`, `cargo check`.
