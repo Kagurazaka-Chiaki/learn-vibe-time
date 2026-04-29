@@ -1,9 +1,9 @@
 # Agent State
 
-Current batch: none
+Current batch: `.agent/batches/ready/batch-002-frontend-refactor.md`
 Current task: none
-Last successful task: none
-Last run: 2026-04-29 bootstrap app harness
+Last successful task: T002
+Last run: 2026-04-29 T002 MVP task queue
 
 ## Mode
 
@@ -21,9 +21,9 @@ Last run: 2026-04-29 bootstrap app harness
 This harness controls the `app/` project. The sibling `../iota-agnt01/`
 submodule remains a reference source for templates and policy language.
 
-No active batch is configured yet. Create tasks under `.agent/tasks/ready/`,
-create a batch under `.agent/batches/ready/`, then update `Current batch` before
-running the batch protocol.
+The next active batch is the frontend refactor batch. Execute only tasks listed
+by `.agent/batches/ready/batch-002-frontend-refactor.md` unless the user gives a
+new explicit scope.
 
 Update this file only with factual execution state.
 Do not use this file for future planning or design discussion.

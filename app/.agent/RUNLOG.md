@@ -24,6 +24,54 @@ Notes:
 
 ## Entries
 
+### 2026-04-29 - T001/T002 MVP roadmap and task queue
+
+Status: DONE
+
+Modified files:
+- `../REPORT.md`
+- `.agent/STATE.md`
+- `.agent/RUNLOG.md`
+- `.agent/tasks/ready/T003-extract-city-data.md`
+- `.agent/tasks/ready/T004-extract-time-format-domain.md`
+- `.agent/tasks/ready/T005-extract-solar-domain.md`
+- `.agent/tasks/ready/T006-extract-ui-components.md`
+- `.agent/tasks/ready/T007-clean-app-entry.md`
+- `.agent/tasks/ready/T008-add-rust-time-sync-command.md`
+- `.agent/tasks/ready/T009-wire-tauri-command.md`
+- `.agent/tasks/ready/T010-replace-frontend-sync.md`
+- `.agent/tasks/ready/T011-sync-status-copy.md`
+- `.agent/tasks/ready/T012-add-vitest.md`
+- `.agent/tasks/ready/T013-test-time-format.md`
+- `.agent/tasks/ready/T014-test-solar-domain.md`
+- `.agent/tasks/ready/T015-test-sync-state.md`
+- `.agent/tasks/ready/T016-rename-tauri-app.md`
+- `.agent/tasks/ready/T017-responsive-polish.md`
+- `.agent/tasks/ready/T018-accessibility-pass.md`
+- `.agent/tasks/ready/T019-persist-default-city.md`
+- `.agent/tasks/ready/T020-add-settings-panel.md`
+- `.agent/tasks/ready/T021-error-and-offline-states.md`
+- `.agent/batches/ready/batch-002-frontend-refactor.md`
+- `.agent/batches/ready/batch-003-rust-time-sync.md`
+- `.agent/batches/ready/batch-004-tests.md`
+- `.agent/batches/ready/batch-005-desktop-polish.md`
+- `.agent/batches/ready/batch-006-preferences.md`
+
+Checks run:
+- `Get-Content REPORT.md`
+- task and batch file structure inspection
+- `git status --short`
+
+Result:
+- Converted the project report to Chinese.
+- Added MVP 0-N roadmap, target architecture, technical debt, and execution queue.
+- Created decision-complete task files for frontend refactor, Rust time sync, tests, desktop polish, and preferences.
+- Set the next active batch to Batch 002.
+
+Notes:
+- No app source code was changed in this documentation/control-plane step.
+- Checkpoint commit planned: `docs(agent): add Chinese MVP roadmap`.
+
 ### 2026-04-29 - document-project-bootstrap
 
 Status: DONE
