@@ -1,6 +1,6 @@
 # T011 - Sync Status Copy
 
-Status: READY
+Status: DONE
 
 ## Goal
 

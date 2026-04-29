@@ -1,6 +1,6 @@
 # T010 - Replace Frontend Sync
 
-Status: READY
+Status: DONE
 
 ## Goal
 

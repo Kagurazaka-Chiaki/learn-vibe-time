@@ -1,6 +1,6 @@
 # T008 - Add Rust Time Sync Command
 
-Status: READY
+Status: DONE
 
 ## Goal
 

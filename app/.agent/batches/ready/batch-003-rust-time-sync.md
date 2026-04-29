@@ -1,6 +1,6 @@
 # Batch 003 - Rust Time Sync
 
-Status: READY
+Status: DONE
 
 ## Mode
 
@@ -49,4 +49,10 @@ Stop when all listed tasks are done or blocked, dependency fetch is unavailable,
 
 ## Completion Notes
 
-To be filled after execution.
+Completed on 2026-04-29.
+
+- Added Rust/Tauri `sync_utc_time` command backed by network UTC sources.
+- Registered the command and removed the starter `greet` command.
+- Added frontend sync domain helpers and replaced frontend fetch-based time sync with Tauri invoke.
+- Added Chinese sync status copy for synced and local fallback states.
+- Checks run: `bun run build`, `cargo check`.

@@ -24,6 +24,46 @@ Notes:
 
 ## Entries
 
+### 2026-04-29 - T008/T011 Rust time sync
+
+Status: DONE
+
+Modified files:
+- `src-tauri/Cargo.toml`
+- `src-tauri/Cargo.lock`
+- `src-tauri/src/lib.rs`
+- `src-tauri/src/time_sync.rs`
+- `src/domain/sync.ts`
+- `src/hooks/useClock.ts`
+- `src/components/SyncStatus.tsx`
+- `src/components/ClockPage.tsx`
+- `src/styles/clock.css`
+- `.agent/STATE.md`
+- `.agent/RUNLOG.md`
+- `.agent/tasks/ready/T008-add-rust-time-sync-command.md`
+- `.agent/tasks/ready/T009-wire-tauri-command.md`
+- `.agent/tasks/ready/T010-replace-frontend-sync.md`
+- `.agent/tasks/ready/T011-sync-status-copy.md`
+- `.agent/batches/ready/batch-003-rust-time-sync.md`
+
+Checks run:
+- `bun run build`
+- `cargo check`
+- `git status --short`
+
+Result:
+- Added `sync_utc_time` Tauri command using `reqwest` with Rustls.
+- Added UTC timestamp extraction from numeric and date/time JSON fields.
+- Registered the command and removed the unused starter `greet` command.
+- Replaced frontend network fetch synchronization with Tauri invoke and local fallback.
+- Added Chinese sync copy for synced, fallback, and near-zero drift states.
+- `bun run build` and `cargo check` passed.
+
+Notes:
+- `cargo check` required dependency download and updated `Cargo.lock`.
+- Browser-only dev fallback catches failed `invoke` and uses local system time.
+- Checkpoint commit planned: `feat(time): sync clock through Tauri command`.
+
 ### 2026-04-29 - T003/T007 frontend refactor
 
 Status: DONE

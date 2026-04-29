@@ -1,9 +1,9 @@
 # Agent State
 
-Current batch: `.agent/batches/ready/batch-003-rust-time-sync.md`
+Current batch: `.agent/batches/ready/batch-004-tests.md`
 Current task: none
-Last successful task: T007
-Last run: 2026-04-29 T007 frontend refactor
+Last successful task: T011
+Last run: 2026-04-29 T011 Rust time sync
 
 ## Mode
 
@@ -21,9 +21,9 @@ Last run: 2026-04-29 T007 frontend refactor
 This harness controls the `app/` project. The sibling `../iota-agnt01/`
 submodule remains a reference source for templates and policy language.
 
-The next active batch is the Rust time sync batch. Execute only tasks listed by
-`.agent/batches/ready/batch-003-rust-time-sync.md` unless the user gives a new
-explicit scope.
+The next active batch is the tests batch. Execute only tasks listed by
+`.agent/batches/ready/batch-004-tests.md` unless the user gives a new explicit
+scope.
 
 Update this file only with factual execution state.
 Do not use this file for future planning or design discussion.

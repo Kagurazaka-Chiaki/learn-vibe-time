@@ -1,6 +1,6 @@
 # T009 - Wire Tauri Command
 
-Status: READY
+Status: DONE
 
 ## Goal
 

@@ -32,9 +32,6 @@ export default function ClockPage() {
           <ClockDisplay clockText={clockText} />
           <DatePanel dateText={dateText} tagText={activeCity.tagline ?? `Day ${dayOfYear}`} sunLine={sunLine} />
           <CityRail activeCity={activeCity} now={now} onSelectCity={setActiveCityKey} />
-          <div className="source-line">
-            授时源: {syncState.sourceName} · {syncState.synced ? "已同步" : "本地回退"}
-          </div>
         </section>
       </div>
     </main>
