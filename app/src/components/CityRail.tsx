@@ -1,18 +1,19 @@
 import { CITIES, type City } from "../data/cities";
-import { formatCityTime } from "../domain/timeFormat";
+import { formatCityTime, type ClockHourMode } from "../domain/timeFormat";
 
 type CityRailProps = {
   activeCity: City;
   now: Date;
+  hourMode: ClockHourMode;
   onSelectCity: (cityKey: string) => void;
 };
 
-export default function CityRail({ activeCity, now, onSelectCity }: CityRailProps) {
+export default function CityRail({ activeCity, now, hourMode, onSelectCity }: CityRailProps) {
   return (
     <nav className="city-rail" aria-label="城市时间">
       {CITIES.map((city) => {
         const active = city.key === activeCity.key;
-        const cityTime = formatCityTime(now, city.timeZone);
+        const cityTime = formatCityTime(now, city.timeZone, { hourMode });
 
         return (
           <button

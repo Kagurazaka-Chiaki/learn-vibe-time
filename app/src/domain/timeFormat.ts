@@ -8,6 +8,13 @@ export type LocalDateParts = {
   second: string;
 };
 
+export type ClockHourMode = "12" | "24";
+
+export type FormatTimeOptions = {
+  showSeconds?: boolean;
+  hourMode?: ClockHourMode;
+};
+
 function normalizeHour(hour: string): string {
   return hour === "24" ? "00" : hour;
 }
@@ -58,14 +65,42 @@ export function getDayOfYear(year: number, month: number, day: number): number {
   return Math.floor((current.getTime() - start.getTime()) / 86400000);
 }
 
-export function formatClock(date: Date, timeZone: string): string {
-  const parts = getLocalDateParts(date, timeZone);
-  return `${parts.hour}:${parts.minute}:${parts.second}`;
+export function formatTimeInZone(date: Date, timeZone: string, options: FormatTimeOptions = {}): string {
+  const showSeconds = options.showSeconds ?? true;
+  const hourMode = options.hourMode ?? "24";
+  const formatOptions: Intl.DateTimeFormatOptions = {
+    timeZone,
+    hour: "2-digit",
+    minute: "2-digit",
+    second: showSeconds ? "2-digit" : undefined,
+  };
+
+  if (hourMode === "12") {
+    formatOptions.hour12 = true;
+  } else {
+    formatOptions.hourCycle = "h23";
+  }
+
+  const parts = new Intl.DateTimeFormat("zh-CN", formatOptions).formatToParts(date);
+  const map: Record<string, string> = {};
+  for (const part of parts) {
+    if (part.type !== "literal") {
+      map[part.type] = part.value;
+    }
+  }
+
+  const hour = hourMode === "24" ? normalizeHour(map.hour) : map.hour;
+  const time = showSeconds ? `${hour}:${map.minute}:${map.second}` : `${hour}:${map.minute}`;
+  const dayPeriod = map.dayPeriod ? `${map.dayPeriod} ` : "";
+  return `${dayPeriod}${time}`;
 }
 
-export function formatCityTime(date: Date, timeZone: string): string {
-  const parts = getLocalDateParts(date, timeZone);
-  return `${parts.hour}:${parts.minute}`;
+export function formatClock(date: Date, timeZone: string, options: FormatTimeOptions = {}): string {
+  return formatTimeInZone(date, timeZone, { showSeconds: true, ...options });
+}
+
+export function formatCityTime(date: Date, timeZone: string, options: FormatTimeOptions = {}): string {
+  return formatTimeInZone(date, timeZone, { showSeconds: false, ...options });
 }
 
 export function formatChineseDate(date: Date, timeZone: string): string {

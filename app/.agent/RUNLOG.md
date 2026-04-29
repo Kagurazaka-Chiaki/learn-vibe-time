@@ -24,6 +24,42 @@ Notes:
 
 ## Entries
 
+### 2026-04-30 - T019/T021 preferences and offline states
+
+Status: DONE
+
+Modified files:
+- `src/domain/timeFormat.ts`
+- `src/hooks/useSelectedCity.ts`
+- `src/hooks/useClockPreferences.ts`
+- `src/components/SettingsPanel.tsx`
+- `src/components/CityRail.tsx`
+- `src/components/SyncStatus.tsx`
+- `src/components/ClockPage.tsx`
+- `src/styles/clock.css`
+- `.agent/STATE.md`
+- `.agent/RUNLOG.md`
+- `.agent/tasks/ready/T019-persist-default-city.md`
+- `.agent/tasks/ready/T020-add-settings-panel.md`
+- `.agent/tasks/ready/T021-error-and-offline-states.md`
+- `.agent/batches/ready/batch-006-preferences.md`
+
+Checks run:
+- `bun run test`
+- `bun run build`
+- `git status --short`
+
+Result:
+- Persisted selected city in `localStorage` with invalid-key fallback to Sydney.
+- Added compact settings for city, seconds visibility, and 12/24-hour mode.
+- Added last-sync display and manual resync action.
+- Kept network failure as a local-system-time fallback instead of blocking the clock.
+- `bun run test` and `bun run build` passed.
+
+Notes:
+- No cloud sync, accounts, or additional dependencies were added.
+- Checkpoint commit planned: `feat(app): add basic clock preferences`.
+
 ### 2026-04-29 - T016/T018 desktop polish
 
 Status: DONE

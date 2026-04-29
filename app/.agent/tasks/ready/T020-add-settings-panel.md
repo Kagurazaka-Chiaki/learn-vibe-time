@@ -1,6 +1,6 @@
 # T020 - Add Settings Panel
 
-Status: READY
+Status: DONE
 
 ## Goal
 

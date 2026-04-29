@@ -1,6 +1,6 @@
 # T021 - Error and Offline States
 
-Status: READY
+Status: DONE
 
 ## Goal
 

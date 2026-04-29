@@ -1,6 +1,6 @@
 # Batch 006 - Preferences
 
-Status: READY
+Status: DONE
 
 ## Mode
 
@@ -48,4 +48,10 @@ Stop when listed tasks are done or blocked, or preference scope needs product de
 
 ## Completion Notes
 
-To be filled after execution.
+Completed on 2026-04-30.
+
+- Persisted selected city in localStorage.
+- Added a compact settings panel for city, seconds visibility, and 12/24-hour mode.
+- Added last-sync display and manual resync action.
+- Kept local-time fallback calm and non-blocking.
+- Checks run: `bun run test`, `bun run build`.

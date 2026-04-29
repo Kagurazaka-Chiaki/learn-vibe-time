@@ -1,6 +1,6 @@
 # T019 - Persist Default City
 
-Status: READY
+Status: DONE
 
 ## Goal
 
