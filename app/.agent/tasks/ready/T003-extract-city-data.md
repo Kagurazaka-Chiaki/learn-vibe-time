@@ -1,6 +1,6 @@
 # T003 - Extract City Data
 
-Status: READY
+Status: DONE
 
 ## Goal
 

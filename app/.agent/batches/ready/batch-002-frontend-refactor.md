@@ -1,6 +1,6 @@
 # Batch 002 - Frontend Refactor
 
-Status: READY
+Status: DONE
 
 ## Mode
 
@@ -50,4 +50,11 @@ Stop when all listed tasks are done or blocked, checks fail twice for unclear re
 
 ## Completion Notes
 
-To be filled after execution.
+Completed on 2026-04-29.
+
+- Extracted city data, time formatting, solar calculation, selected city state, and clock state into separate modules.
+- Split UI into `ClockPage`, `ClockDisplay`, `DatePanel`, `SyncStatus`, and `CityRail`.
+- Moved clock styling into `src/styles/clock.css`.
+- Replaced starter `App.tsx` content with the clock app.
+- Reduced `TimeIsWidget.tsx` to a compatibility export.
+- Check run: `bun run build` passed.

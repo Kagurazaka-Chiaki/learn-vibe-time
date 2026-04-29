@@ -1,6 +1,6 @@
 # T007 - Clean App Entry
 
-Status: READY
+Status: DONE
 
 ## Goal
 

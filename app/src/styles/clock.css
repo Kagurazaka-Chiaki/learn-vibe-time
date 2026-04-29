@@ -1,0 +1,182 @@
+.clock-page {
+  min-height: 100vh;
+  width: 100%;
+  background: #ececec;
+  color: #2f2f31;
+  font-family: Arial, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+
+.clock-shell {
+  max-width: 2048px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 18px 26px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sync-status {
+  display: grid;
+  gap: 10px;
+}
+
+.sync-drift {
+  font-size: clamp(36px, 3.2vw, 74px);
+  line-height: 1;
+  font-weight: 800;
+}
+
+.sync-precision {
+  font-size: clamp(26px, 2vw, 54px);
+  line-height: 1.05;
+  font-weight: 400;
+}
+
+.location-line {
+  margin-top: 8px;
+  font-size: clamp(30px, 2.25vw, 58px);
+  line-height: 1.08;
+  font-weight: 400;
+}
+
+.clock-main {
+  margin-top: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.clock-display {
+  font-size: clamp(96px, 30vw, 465px);
+  line-height: 0.84;
+  font-weight: 900;
+  color: #2d2d2f;
+  text-align: center;
+  font-variant-numeric: tabular-nums lining-nums;
+  user-select: none;
+  text-rendering: geometricPrecision;
+}
+
+.date-panel {
+  width: 100%;
+  margin-top: 20px;
+  text-align: right;
+  color: #333333;
+}
+
+.date-line {
+  font-size: clamp(28px, 2.8vw, 68px);
+  line-height: 1.05;
+  font-weight: 400;
+}
+
+.tag-line {
+  margin-top: 2px;
+  font-size: clamp(18px, 1.45vw, 36px);
+  line-height: 1.05;
+  font-weight: 400;
+  color: #3d3d3d;
+}
+
+.sun-line {
+  width: 100%;
+  margin-top: 10px;
+  text-align: right;
+  font-size: clamp(17px, 1.25vw, 31px);
+  line-height: 1.2;
+  font-weight: 400;
+  color: #333333;
+}
+
+.city-rail {
+  width: 100%;
+  margin-top: 30px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.city-card {
+  width: 145px;
+  height: 95px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, transform 120ms ease;
+  padding: 4px 0 2px;
+  color: #2f2f31;
+  background: #e3e3e3;
+  font: inherit;
+}
+
+.city-card:hover {
+  background: #d7d7d9;
+}
+
+.city-card:focus-visible {
+  outline: 3px solid #2f6fed;
+  outline-offset: 2px;
+}
+
+.city-card-active {
+  background: #ababaf;
+  color: #ffffff;
+}
+
+.city-label {
+  font-size: 23px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.city-time {
+  margin-top: 8px;
+  font-size: 28px;
+  line-height: 1;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.source-line {
+  margin-top: 14px;
+  text-align: right;
+  font-size: 12px;
+  color: #7b7b7b;
+}
+
+@media (max-width: 760px) {
+  .clock-shell {
+    padding: 14px 16px 18px;
+  }
+
+  .clock-display {
+    font-size: clamp(76px, 23vw, 160px);
+  }
+
+  .city-rail {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  .city-card {
+    width: 112px;
+    height: 78px;
+    flex: 0 0 auto;
+  }
+
+  .city-label {
+    font-size: 19px;
+  }
+
+  .city-time {
+    font-size: 23px;
+  }
+}

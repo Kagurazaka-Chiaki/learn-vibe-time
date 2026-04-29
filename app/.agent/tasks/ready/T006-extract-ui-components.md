@@ -1,6 +1,6 @@
 # T006 - Extract UI Components
 
-Status: READY
+Status: DONE
 
 ## Goal
 

@@ -1,6 +1,6 @@
 # T004 - Extract Time Format Domain
 
-Status: READY
+Status: DONE
 
 ## Goal
 

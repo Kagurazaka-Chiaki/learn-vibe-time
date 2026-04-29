@@ -1,6 +1,6 @@
 # T005 - Extract Solar Domain
 
-Status: READY
+Status: DONE
 
 ## Goal
 

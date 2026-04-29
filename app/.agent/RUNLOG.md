@@ -24,6 +24,53 @@ Notes:
 
 ## Entries
 
+### 2026-04-29 - T003/T007 frontend refactor
+
+Status: DONE
+
+Modified files:
+- `src/App.tsx`
+- `src/App.css`
+- `src/TimeIsWidget.tsx`
+- `src/data/cities.ts`
+- `src/domain/timeFormat.ts`
+- `src/domain/solar.ts`
+- `src/hooks/useClock.ts`
+- `src/hooks/useSelectedCity.ts`
+- `src/components/ClockPage.tsx`
+- `src/components/ClockDisplay.tsx`
+- `src/components/DatePanel.tsx`
+- `src/components/SyncStatus.tsx`
+- `src/components/CityRail.tsx`
+- `src/styles/clock.css`
+- `.agent/STATE.md`
+- `.agent/RUNLOG.md`
+- `.agent/tasks/ready/T003-extract-city-data.md`
+- `.agent/tasks/ready/T004-extract-time-format-domain.md`
+- `.agent/tasks/ready/T005-extract-solar-domain.md`
+- `.agent/tasks/ready/T006-extract-ui-components.md`
+- `.agent/tasks/ready/T007-clean-app-entry.md`
+- `.agent/batches/ready/batch-002-frontend-refactor.md`
+
+Checks run:
+- `bun run build`
+- line count check for `TimeIsWidget.tsx`, `ClockPage.tsx`, and `useClock.ts`
+- `git status --short`
+- `git diff --stat`
+
+Result:
+- Split the 684-line `TimeIsWidget.tsx` into focused data, domain, hook, component, and style modules.
+- Reduced `TimeIsWidget.tsx` to a 3-line compatibility export.
+- Removed starter Vite/Tauri/React greet UI from `App.tsx`.
+- Fixed time formatting helper to use `hourCycle: "h23"` and normalize `24` to `00`.
+- Added safe solar fallback text when sun-time data is unavailable.
+- `bun run build` passed.
+
+Notes:
+- `useClock.ts` still contains the old frontend network sync path. Batch 003 will replace it with the Rust/Tauri command.
+- `bun run typecheck` was not run because `package.json` does not define a `typecheck` script yet; `bun run build` runs `tsc && vite build`.
+- Checkpoint commit planned: `refactor(app): split clock UI and remove starter screen`.
+
 ### 2026-04-29 - T001/T002 MVP roadmap and task queue
 
 Status: DONE
