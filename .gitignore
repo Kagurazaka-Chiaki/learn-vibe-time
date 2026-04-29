@@ -1,0 +1,59 @@
+# OS and editor files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Node, Vite, and web build outputs
+node_modules/
+dist/
+dist-ssr/
+build/
+out/
+coverage/
+*.local
+
+# Rust and Tauri build outputs
+target/
+gen/
+CMakeFiles/
+CMakeCache.txt
+cmake-build-*/
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+.temp/
+*.tmp
+*.temp
+*.bak
+*.orig
+
+# Keep the app agent harness auditable
+!app/.agent/
+!app/.agent/logs/
+!app/.agent/logs/**
+!app/.agent/reports/
+!app/.agent/reports/**

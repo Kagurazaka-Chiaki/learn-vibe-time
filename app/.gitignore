@@ -1,0 +1,57 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+node_modules
+dist
+dist-ssr
+build
+out
+coverage
+*.local
+tmp
+temp
+.tmp
+.temp
+*.tmp
+*.temp
+*.bak
+*.orig
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Rust and native build outputs
+target
+CMakeFiles
+CMakeCache.txt
+cmake-build-*
+
+# Keep the file-system harness auditable
+!.agent/
+!.agent/logs/
+!.agent/reports/

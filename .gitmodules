@@ -1,0 +1,4 @@
+[submodule "iota-agnt01"]
+	path = iota-agnt01
+	url = https://github.com/Kagurazaka-Chiaki/iota-agnt01.git
+	branch = main
