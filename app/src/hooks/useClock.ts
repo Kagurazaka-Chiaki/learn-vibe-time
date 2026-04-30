@@ -4,17 +4,17 @@ import { createFallbackSyncState, syncUtcTime, type SyncState } from "../domain/
 const RESYNC_INTERVAL_MS = 5 * 60 * 1000;
 const TICK_INTERVAL_MS = 250;
 
-export function useClock() {
+export function useClock(timeSourceId: string) {
   const [syncState, setSyncState] = useState<SyncState>(() => createFallbackSyncState(null));
   const [renderNow, setRenderNow] = useState<number>(Date.now());
 
   const syncOnce = useCallback(async () => {
     try {
-      setSyncState(await syncUtcTime());
+      setSyncState(await syncUtcTime(timeSourceId));
     } catch {
       setSyncState(createFallbackSyncState());
     }
-  }, []);
+  }, [timeSourceId]);
 
   useEffect(() => {
     void syncOnce();

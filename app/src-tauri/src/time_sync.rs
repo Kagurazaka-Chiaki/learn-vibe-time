@@ -13,11 +13,22 @@ pub struct TimeSyncResponse {
     source_name: String,
 }
 
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TimeSourceOption {
+    id: &'static str,
+    name: &'static str,
+    kind: &'static str,
+}
+
+#[derive(Clone, Copy)]
 struct TimeSource {
+    id: &'static str,
     name: &'static str,
     kind: TimeSourceKind,
 }
 
+#[derive(Clone, Copy)]
 enum TimeSourceKind {
     HttpJson { url: &'static str },
     Ntp { host: &'static str },
@@ -25,18 +36,70 @@ enum TimeSourceKind {
 
 const TIME_SOURCES: &[TimeSource] = &[
     TimeSource {
+        id: "au-pool",
+        name: "澳大利亚 NTP Pool",
+        kind: TimeSourceKind::Ntp {
+            host: "au.pool.ntp.org:123",
+        },
+    },
+    TimeSource {
+        id: "cloudflare",
+        name: "Cloudflare Time",
+        kind: TimeSourceKind::Ntp {
+            host: "time.cloudflare.com:123",
+        },
+    },
+    TimeSource {
+        id: "google",
+        name: "Google Public NTP",
+        kind: TimeSourceKind::Ntp {
+            host: "time.google.com:123",
+        },
+    },
+    TimeSource {
+        id: "cn-pool",
+        name: "中国 NTP Pool",
+        kind: TimeSourceKind::Ntp {
+            host: "cn.pool.ntp.org:123",
+        },
+    },
+    TimeSource {
+        id: "tencent",
+        name: "腾讯云 NTP",
+        kind: TimeSourceKind::Ntp {
+            host: "ntp.tencent.com:123",
+        },
+    },
+    TimeSource {
+        id: "aliyun",
+        name: "阿里云 NTP",
+        kind: TimeSourceKind::Ntp {
+            host: "ntp.aliyun.com:123",
+        },
+    },
+    TimeSource {
+        id: "global-pool",
+        name: "全球 NTP Pool",
+        kind: TimeSourceKind::Ntp {
+            host: "pool.ntp.org:123",
+        },
+    },
+    TimeSource {
+        id: "ntsc",
         name: "国家授时中心 NTP",
         kind: TimeSourceKind::Ntp {
             host: "ntp.ntsc.ac.cn:123",
         },
     },
     TimeSource {
+        id: "worldtimeapi",
         name: "worldtimeapi",
         kind: TimeSourceKind::HttpJson {
             url: "https://worldtimeapi.org/api/timezone/Etc/UTC",
         },
     },
     TimeSource {
+        id: "timeapi",
         name: "timeapi",
         kind: TimeSourceKind::HttpJson {
             url: "https://timeapi.io/api/Time/current/zone?timeZone=UTC",
@@ -45,6 +108,13 @@ const TIME_SOURCES: &[TimeSource] = &[
 ];
 
 const NTP_UNIX_EPOCH_OFFSET_SECONDS: u64 = 2_208_988_800;
+
+fn source_kind_label(kind: TimeSourceKind) -> &'static str {
+    match kind {
+        TimeSourceKind::Ntp { .. } => "ntp",
+        TimeSourceKind::HttpJson { .. } => "httpJson",
+    }
+}
 
 fn now_ms() -> Result<i64, String> {
     let duration = SystemTime::now()
@@ -215,15 +285,42 @@ async fn query_http_json_source(
 }
 
 #[tauri::command]
-pub async fn sync_utc_time() -> Result<TimeSyncResponse, String> {
+pub fn list_time_sources() -> Vec<TimeSourceOption> {
+    TIME_SOURCES
+        .iter()
+        .map(|source| TimeSourceOption {
+            id: source.id,
+            name: source.name,
+            kind: source_kind_label(source.kind),
+        })
+        .collect()
+}
+
+#[tauri::command]
+pub async fn sync_utc_time(source_id: Option<String>) -> Result<TimeSyncResponse, String> {
     let client = reqwest::Client::builder()
         .timeout(Duration::from_secs(8))
         .build()
         .map_err(|error| format!("failed to create time sync client: {error}"))?;
 
     let mut errors = Vec::new();
+    let selected_source = source_id
+        .as_deref()
+        .filter(|id| !id.is_empty() && *id != "auto")
+        .map(|id| {
+            TIME_SOURCES
+                .iter()
+                .find(|source| source.id == id)
+                .ok_or_else(|| format!("unknown time source: {id}"))
+        })
+        .transpose()?;
 
-    for source in TIME_SOURCES {
+    let sources: Vec<&TimeSource> = match selected_source {
+        Some(source) => vec![source],
+        None => TIME_SOURCES.iter().collect(),
+    };
+
+    for source in sources {
         let result = match source.kind {
             TimeSourceKind::Ntp { host } => query_ntp_source(source, host),
             TimeSourceKind::HttpJson { url } => query_http_json_source(&client, source, url).await,

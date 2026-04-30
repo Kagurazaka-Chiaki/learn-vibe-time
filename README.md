@@ -15,12 +15,32 @@
 - 主界面直接进入时钟体验，不再显示 Vite/Tauri/React starter UI。
 - 前端已拆分为 `components/`、`domain/`、`hooks/`、`data/` 和 `styles/`。
 - `TimeIsWidget.tsx` 只保留兼容导出。
-- Rust/Tauri 提供 `sync_utc_time` 授时命令。
-- 授时源优先尝试中国科学院国家授时中心 NTP：`ntp.ntsc.ac.cn:123`。
+- Rust/Tauri 提供 `sync_utc_time` 授时命令，并支持 `list_time_sources` 获取可选授时源。
+- 支持自动授时源 fallback，也可以手动切换预设源。
+- 当前预设授时源包括 `au.pool.ntp.org`、`cn.pool.ntp.org`、`time.cloudflare.com`、`time.google.com`、`ntp.tencent.com`、`ntp.aliyun.com`、`pool.ntp.org`、国家授时中心 NTP，以及 HTTP JSON 备用源。
 - 支持本地时间回退、最近同步时间和手动重新同步。
-- 支持城市选择、显示秒、12/24 小时制，并用 `localStorage` 保存偏好。
+- 支持城市选择、显示秒、12/24 小时制、授时源选择、纯净模式，并用 `localStorage` 保存偏好。
 - 12 小时制下，上午/下午与数字时间分开排版，避免巨大字号挤压。
+- 时间字号会根据窗口大小和文本长度自适应，普通模式和纯净模式都尽量填满但不溢出。
+- 纯净模式只显示当前时间；按 `Esc` 或双击时间区域退出。
+- 已替换默认 Tauri 图标，使用透明背景时钟图标。
 - 提供 Tauri dev 资源占用采样脚本。
+
+## 使用方式
+
+个人使用时可以直接运行 release 可执行文件：
+
+```text
+app/src-tauri/target/release/app.exe
+```
+
+如果需要安装包，Windows NSIS 输出文件名为：
+
+```text
+app/src-tauri/target/release/bundle/nsis/vibe_time_0.1.0_x64-setup.exe
+```
+
+直接运行 `app.exe` 适合自己使用；安装包适合分发，会创建正式安装记录和快捷方式。
 
 ## 仓库结构
 
@@ -62,6 +82,18 @@ bun run tauri dev
 bun run typecheck
 bun run test
 bun run build
+```
+
+打 Windows NSIS 安装包：
+
+```bash
+bun run tauri build --bundles nsis
+```
+
+只检查 Rust 编译时，可以进入 `app/src-tauri/` 后运行：
+
+```bash
+cargo check
 ```
 
 ## 资源占用测量

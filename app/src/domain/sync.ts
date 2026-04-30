@@ -8,6 +8,12 @@ export type TimeSyncResponse = {
   sourceName: string;
 };
 
+export type TimeSourceOption = {
+  id: string;
+  name: string;
+  kind: "ntp" | "httpJson";
+};
+
 export type SyncState = {
   offsetMs: number;
   precisionMs: number;
@@ -21,6 +27,21 @@ export type DriftCopy = {
   precisionText: string;
   sourceText: string;
 };
+
+export const AUTO_TIME_SOURCE_ID = "auto";
+
+export const FALLBACK_TIME_SOURCES: TimeSourceOption[] = [
+  { id: "au-pool", name: "澳大利亚 NTP Pool", kind: "ntp" },
+  { id: "cloudflare", name: "Cloudflare Time", kind: "ntp" },
+  { id: "google", name: "Google Public NTP", kind: "ntp" },
+  { id: "cn-pool", name: "中国 NTP Pool", kind: "ntp" },
+  { id: "tencent", name: "腾讯云 NTP", kind: "ntp" },
+  { id: "aliyun", name: "阿里云 NTP", kind: "ntp" },
+  { id: "global-pool", name: "全球 NTP Pool", kind: "ntp" },
+  { id: "ntsc", name: "国家授时中心 NTP", kind: "ntp" },
+  { id: "worldtimeapi", name: "worldtimeapi", kind: "httpJson" },
+  { id: "timeapi", name: "timeapi", kind: "httpJson" },
+];
 
 export function createFallbackSyncState(lastSyncAt: number | null = Date.now()): SyncState {
   return {
@@ -42,8 +63,20 @@ export function createSyncedState(response: TimeSyncResponse, lastSyncAt = Date.
   };
 }
 
-export async function syncUtcTime(): Promise<SyncState> {
-  const response = await invoke<TimeSyncResponse>("sync_utc_time");
+export async function listTimeSources(): Promise<TimeSourceOption[]> {
+  try {
+    const sources = await invoke<TimeSourceOption[]>("list_time_sources");
+    return sources.length > 0 ? sources : FALLBACK_TIME_SOURCES;
+  } catch {
+    return FALLBACK_TIME_SOURCES;
+  }
+}
+
+export async function syncUtcTime(sourceId = AUTO_TIME_SOURCE_ID): Promise<SyncState> {
+  const response = await invoke<TimeSyncResponse>("sync_utc_time", {
+    sourceId: sourceId === AUTO_TIME_SOURCE_ID ? null : sourceId,
+  });
+
   return createSyncedState(response);
 }
 

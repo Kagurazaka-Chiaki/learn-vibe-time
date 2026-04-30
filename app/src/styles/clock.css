@@ -78,6 +78,10 @@
   padding: 4px 8px;
 }
 
+.settings-source select {
+  max-width: min(64vw, 260px);
+}
+
 .settings-check input {
   width: 18px;
   height: 18px;
@@ -121,6 +125,10 @@
 }
 
 .clock-display {
+  --clock-time-min: 68;
+  --clock-time-max: 320;
+  --clock-time-font-size: clamp(84px, min(21vw, 34vh), 320px);
+  --clock-period-ratio: 0.18;
   display: flex;
   align-items: baseline;
   justify-content: center;
@@ -134,16 +142,47 @@
 
 .clock-day-period {
   flex: 0 0 auto;
-  font-size: clamp(22px, min(4vw, 7vh), 56px);
+  font-size: max(18px, calc(var(--clock-time-font-size) * var(--clock-period-ratio)));
   line-height: 1;
   font-weight: 700;
 }
 
 .clock-time-value {
-  font-size: clamp(84px, min(21vw, 34vh), 320px);
+  font-size: var(--clock-time-font-size);
   line-height: 0.84;
   font-weight: 900;
   font-variant-numeric: tabular-nums lining-nums;
+}
+
+.clock-page-zen {
+  overflow: hidden;
+}
+
+.clock-shell-zen {
+  max-width: none;
+  padding: 0;
+}
+
+.clock-main-zen {
+  min-height: 100vh;
+  margin-top: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.clock-main-zen .clock-display {
+  --clock-time-min: 76;
+  --clock-time-max: 520;
+  --clock-time-font-size: clamp(92px, min(28vw, 46vh), 520px);
+  padding: clamp(18px, 4vw, 72px);
+}
+
+.clock-main-zen .clock-day-period {
+  font-size: max(22px, calc(var(--clock-time-font-size) * 0.16));
+}
+
+.clock-main-zen .clock-time-value {
+  font-size: var(--clock-time-font-size);
 }
 
 .date-panel {
@@ -253,11 +292,11 @@
   }
 
   .clock-day-period {
-    font-size: clamp(18px, 5vw, 32px);
+    font-size: max(16px, calc(var(--clock-time-font-size) * var(--clock-period-ratio)));
   }
 
   .clock-time-value {
-    font-size: clamp(68px, 22vw, 150px);
+    font-size: var(--clock-time-font-size);
   }
 
   .city-rail {

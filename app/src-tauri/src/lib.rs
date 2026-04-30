@@ -4,7 +4,10 @@ mod time_sync;
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![time_sync::sync_utc_time])
+        .invoke_handler(tauri::generate_handler![
+            time_sync::list_time_sources,
+            time_sync::sync_utc_time,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
