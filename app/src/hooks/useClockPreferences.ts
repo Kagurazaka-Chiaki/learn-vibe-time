@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ClockHourMode } from "../domain/timeFormat";
 
-const PREFERENCES_STORAGE_KEY = "clean-time.preferences";
+const PREFERENCES_STORAGE_KEY = "vibe-time.preferences";
 
 export type ClockPreferences = {
   showSeconds: boolean;

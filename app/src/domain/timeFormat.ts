@@ -15,6 +15,12 @@ export type FormatTimeOptions = {
   hourMode?: ClockHourMode;
 };
 
+export type ClockDisplayParts = {
+  dayPeriod: string;
+  time: string;
+  text: string;
+};
+
 function normalizeHour(hour: string): string {
   return hour === "24" ? "00" : hour;
 }
@@ -65,7 +71,7 @@ export function getDayOfYear(year: number, month: number, day: number): number {
   return Math.floor((current.getTime() - start.getTime()) / 86400000);
 }
 
-export function formatTimeInZone(date: Date, timeZone: string, options: FormatTimeOptions = {}): string {
+export function formatTimePartsInZone(date: Date, timeZone: string, options: FormatTimeOptions = {}): ClockDisplayParts {
   const showSeconds = options.showSeconds ?? true;
   const hourMode = options.hourMode ?? "24";
   const formatOptions: Intl.DateTimeFormatOptions = {
@@ -91,12 +97,25 @@ export function formatTimeInZone(date: Date, timeZone: string, options: FormatTi
 
   const hour = hourMode === "24" ? normalizeHour(map.hour) : map.hour;
   const time = showSeconds ? `${hour}:${map.minute}:${map.second}` : `${hour}:${map.minute}`;
-  const dayPeriod = map.dayPeriod ? `${map.dayPeriod} ` : "";
-  return `${dayPeriod}${time}`;
+  const dayPeriod = map.dayPeriod ?? "";
+
+  return {
+    dayPeriod,
+    time,
+    text: dayPeriod ? `${dayPeriod} ${time}` : time,
+  };
+}
+
+export function formatTimeInZone(date: Date, timeZone: string, options: FormatTimeOptions = {}): string {
+  return formatTimePartsInZone(date, timeZone, options).text;
+}
+
+export function formatClockParts(date: Date, timeZone: string, options: FormatTimeOptions = {}): ClockDisplayParts {
+  return formatTimePartsInZone(date, timeZone, { showSeconds: true, ...options });
 }
 
 export function formatClock(date: Date, timeZone: string, options: FormatTimeOptions = {}): string {
-  return formatTimeInZone(date, timeZone, { showSeconds: true, ...options });
+  return formatClockParts(date, timeZone, options).text;
 }
 
 export function formatCityTime(date: Date, timeZone: string, options: FormatTimeOptions = {}): string {

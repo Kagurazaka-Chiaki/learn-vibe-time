@@ -8,7 +8,8 @@ Treat `app/` as the project root for all paths in this file. The sibling
 
 ## Project Identity
 
-This project is a small Tauri + React clock app inspired by Time.is. The product
+This project is `Vibe Time`, a Tauri + React desktop clock positioned as fully
+driven by `iota-agnt001`, with no human-written application code. The product
 goal is an ad-free time display that can run as a web app or desktop app without
 requiring a browser tab.
 

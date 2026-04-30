@@ -1,6 +1,7 @@
 use chrono::{DateTime, NaiveDateTime};
 use serde::Serialize;
 use serde_json::Value;
+use std::net::UdpSocket;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 #[derive(Debug, Serialize)]
@@ -14,19 +15,36 @@ pub struct TimeSyncResponse {
 
 struct TimeSource {
     name: &'static str,
-    url: &'static str,
+    kind: TimeSourceKind,
+}
+
+enum TimeSourceKind {
+    HttpJson { url: &'static str },
+    Ntp { host: &'static str },
 }
 
 const TIME_SOURCES: &[TimeSource] = &[
     TimeSource {
+        name: "国家授时中心 NTP",
+        kind: TimeSourceKind::Ntp {
+            host: "ntp.ntsc.ac.cn:123",
+        },
+    },
+    TimeSource {
         name: "worldtimeapi",
-        url: "https://worldtimeapi.org/api/timezone/Etc/UTC",
+        kind: TimeSourceKind::HttpJson {
+            url: "https://worldtimeapi.org/api/timezone/Etc/UTC",
+        },
     },
     TimeSource {
         name: "timeapi",
-        url: "https://timeapi.io/api/Time/current/zone?timeZone=UTC",
+        kind: TimeSourceKind::HttpJson {
+            url: "https://timeapi.io/api/Time/current/zone?timeZone=UTC",
+        },
     },
 ];
+
+const NTP_UNIX_EPOCH_OFFSET_SECONDS: u64 = 2_208_988_800;
 
 fn now_ms() -> Result<i64, String> {
     let duration = SystemTime::now()
@@ -109,6 +127,93 @@ fn extract_epoch_ms(value: &Value) -> Option<i64> {
     }
 }
 
+fn query_ntp_source(source: &TimeSource, host: &str) -> Result<TimeSyncResponse, String> {
+    let request_start_ms = now_ms()?;
+    let request_start_mono = std::time::Instant::now();
+    let socket = UdpSocket::bind("0.0.0.0:0").map_err(|error| format!("{} UDP bind failed: {error}", source.name))?;
+
+    socket
+        .set_read_timeout(Some(Duration::from_secs(4)))
+        .map_err(|error| format!("{} read timeout setup failed: {error}", source.name))?;
+    socket
+        .set_write_timeout(Some(Duration::from_secs(4)))
+        .map_err(|error| format!("{} write timeout setup failed: {error}", source.name))?;
+    socket
+        .connect(host)
+        .map_err(|error| format!("{} connect failed: {error}", source.name))?;
+
+    let mut request = [0_u8; 48];
+    request[0] = 0x1b;
+    socket
+        .send(&request)
+        .map_err(|error| format!("{} request send failed: {error}", source.name))?;
+
+    let mut response = [0_u8; 48];
+    let received = socket
+        .recv(&mut response)
+        .map_err(|error| format!("{} response receive failed: {error}", source.name))?;
+    let request_end_ms = now_ms()?;
+
+    if received < response.len() {
+        return Err(format!("{} returned a short NTP packet: {received} bytes", source.name));
+    }
+
+    let seconds = u32::from_be_bytes([response[40], response[41], response[42], response[43]]) as u64;
+    let fraction = u32::from_be_bytes([response[44], response[45], response[46], response[47]]) as u64;
+
+    if seconds < NTP_UNIX_EPOCH_OFFSET_SECONDS {
+        return Err(format!("{} returned a timestamp before Unix epoch", source.name));
+    }
+
+    let unix_seconds = seconds - NTP_UNIX_EPOCH_OFFSET_SECONDS;
+    let fraction_ms = (fraction * 1000) >> 32;
+    let utc_ms = (unix_seconds * 1000 + fraction_ms) as i64;
+    let round_trip_ms = request_start_mono.elapsed().as_secs_f64() * 1000.0;
+
+    Ok(TimeSyncResponse {
+        utc_ms,
+        captured_at_ms: request_start_ms + ((request_end_ms - request_start_ms) / 2),
+        precision_ms: (round_trip_ms / 2.0).max(1.0),
+        source_name: source.name.to_string(),
+    })
+}
+
+async fn query_http_json_source(
+    client: &reqwest::Client,
+    source: &TimeSource,
+    url: &str,
+) -> Result<TimeSyncResponse, String> {
+    let request_start_ms = now_ms()?;
+    let request_start_mono = std::time::Instant::now();
+    let response = client
+        .get(url)
+        .header("accept", "application/json")
+        .send()
+        .await
+        .map_err(|error| format!("{} request failed: {error}", source.name))?;
+    let request_end_ms = now_ms()?;
+    let round_trip_ms = request_start_mono.elapsed().as_secs_f64() * 1000.0;
+
+    let status = response.status();
+    if !status.is_success() {
+        return Err(format!("{} returned HTTP {}", source.name, status));
+    }
+
+    let payload = response
+        .json::<Value>()
+        .await
+        .map_err(|error| format!("{} JSON parse failed: {error}", source.name))?;
+    let utc_ms = extract_epoch_ms(&payload)
+        .ok_or_else(|| format!("{} response did not contain a recognizable timestamp", source.name))?;
+
+    Ok(TimeSyncResponse {
+        utc_ms,
+        captured_at_ms: request_start_ms + ((request_end_ms - request_start_ms) / 2),
+        precision_ms: (round_trip_ms / 2.0).max(1.0),
+        source_name: source.name.to_string(),
+    })
+}
+
 #[tauri::command]
 pub async fn sync_utc_time() -> Result<TimeSyncResponse, String> {
     let client = reqwest::Client::builder()
@@ -119,41 +224,14 @@ pub async fn sync_utc_time() -> Result<TimeSyncResponse, String> {
     let mut errors = Vec::new();
 
     for source in TIME_SOURCES {
-        let request_start_ms = now_ms()?;
-        let request_start_mono = std::time::Instant::now();
-        let response_result = client
-            .get(source.url)
-            .header("accept", "application/json")
-            .send()
-            .await;
-        let request_end_ms = now_ms()?;
-        let round_trip_ms = request_start_mono.elapsed().as_secs_f64() * 1000.0;
+        let result = match source.kind {
+            TimeSourceKind::Ntp { host } => query_ntp_source(source, host),
+            TimeSourceKind::HttpJson { url } => query_http_json_source(&client, source, url).await,
+        };
 
-        match response_result {
-            Ok(response) => {
-                let status = response.status();
-                if !status.is_success() {
-                    errors.push(format!("{} returned HTTP {}", source.name, status));
-                    continue;
-                }
-
-                match response.json::<Value>().await {
-                    Ok(payload) => {
-                        if let Some(utc_ms) = extract_epoch_ms(&payload) {
-                            return Ok(TimeSyncResponse {
-                                utc_ms,
-                                captured_at_ms: request_start_ms + ((request_end_ms - request_start_ms) / 2),
-                                precision_ms: (round_trip_ms / 2.0).max(1.0),
-                                source_name: source.name.to_string(),
-                            });
-                        }
-
-                        errors.push(format!("{} response did not contain a recognizable timestamp", source.name));
-                    }
-                    Err(error) => errors.push(format!("{} JSON parse failed: {error}", source.name)),
-                }
-            }
-            Err(error) => errors.push(format!("{} request failed: {error}", source.name)),
+        match result {
+            Ok(response) => return Ok(response),
+            Err(error) => errors.push(error),
         }
     }
 

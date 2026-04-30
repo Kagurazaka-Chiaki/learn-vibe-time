@@ -1,21 +1,23 @@
-# Time.is-Inspired Clock App
+# Vibe Time
 
-This app is a small Tauri + React project for building a clean, ad-free clock
-experience inspired by Time.is. The goal is to keep the useful parts of a
-precise web clock available as both a browser app and a lightweight desktop app,
-without needing to keep another Chrome tab open.
+Vibe Time is a Tauri + React desktop clock positioned as a fully
+`iota-agnt001`-driven application with no human-written application code. It is
+an ad-free, Time.is-inspired clock experience for daily desktop use, so checking
+the current time does not require keeping another Chrome tab open.
 
-This is also the trial project for the local `iota-agnt01` agent harness. The
-project is intentionally small enough for task-driven agent work while still
-being useful as a real desktop utility.
+This project is also the trial project for the local `iota-agnt01` agent
+harness. The codebase is intentionally small enough for task-driven agent work
+while still exercising frontend architecture, Rust/Tauri integration, time
+correctness, desktop UX, and test coverage.
 
 ## Current State
 
-- The app is based on the Tauri + React + TypeScript starter.
-- `src/TimeIsWidget.tsx` contains the first Time.is-inspired clock prototype.
-- `src/App.tsx` still includes starter UI around the clock widget.
-- The Tauri shell is still using starter product/window metadata.
-- The agent control plane has been initialized under `.agent/`.
+- The app runs as a Tauri + React + TypeScript desktop/Web app.
+- `src/TimeIsWidget.tsx` is now only a compatibility export.
+- The main UI is split across `src/components/`, `src/domain/`, `src/hooks/`,
+  `src/data/`, and `src/styles/`.
+- Rust/Tauri provides the UTC synchronization command.
+- The agent control plane is initialized under `.agent/`.
 
 ## Tech Stack
 
@@ -25,6 +27,7 @@ being useful as a real desktop utility.
 - Tauri 2
 - Bun for frontend scripts
 - Rust for the Tauri backend shell
+- Vitest for domain tests
 
 ## Development Commands
 
@@ -33,7 +36,15 @@ Run from this `app/` directory:
 ```bash
 bun run dev
 bun run build
+bun run test
+bun run typecheck
 bun run tauri dev
+```
+
+Measure dev runtime resource usage after starting Tauri:
+
+```bash
+bun run measure:dev -- -Seconds 60 -IntervalSeconds 1
 ```
 
 ## Agent Workflow
@@ -47,12 +58,3 @@ Before using an agent to change this project, read:
 New work should be described as small tasks under `.agent/tasks/ready/`, grouped
 into a batch under `.agent/batches/ready/`, and executed through the batch
 protocol. Business code changes should stay inside the active task scope.
-
-## Suggested Next Tasks
-
-- Make `TimeIsWidget` the primary app screen and remove starter UI.
-- Rename Tauri product/window metadata from the starter `app` name.
-- Add focused city/time display settings.
-- Decide whether time sync should remain browser fetch based or move behind a
-Tauri command.
-- Add a first real agent task and batch for the UI cleanup.

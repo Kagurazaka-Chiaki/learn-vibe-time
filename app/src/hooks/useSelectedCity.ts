@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { CITIES, DEFAULT_CITY_KEY, getCityByKey } from "../data/cities";
 
-const SELECTED_CITY_STORAGE_KEY = "clean-time.selectedCity";
+const SELECTED_CITY_STORAGE_KEY = "vibe-time.selectedCity";
 
 function isKnownCityKey(value: string | null): value is string {
   return value !== null && CITIES.some((city) => city.key === value);

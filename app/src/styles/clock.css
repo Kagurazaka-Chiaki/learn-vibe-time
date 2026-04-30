@@ -121,16 +121,29 @@
 }
 
 .clock-display {
-  display: block;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: clamp(10px, 1.6vw, 24px);
   width: 100%;
-  font-size: clamp(84px, 29vw, 440px);
-  line-height: 0.84;
-  font-weight: 900;
   color: #2d2d2f;
   text-align: center;
-  font-variant-numeric: tabular-nums lining-nums;
   user-select: none;
   text-rendering: geometricPrecision;
+}
+
+.clock-day-period {
+  flex: 0 0 auto;
+  font-size: clamp(22px, min(4vw, 7vh), 56px);
+  line-height: 1;
+  font-weight: 700;
+}
+
+.clock-time-value {
+  font-size: clamp(84px, min(21vw, 34vh), 320px);
+  line-height: 0.84;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 .date-panel {
@@ -236,6 +249,14 @@
   }
 
   .clock-display {
+    gap: 8px;
+  }
+
+  .clock-day-period {
+    font-size: clamp(18px, 5vw, 32px);
+  }
+
+  .clock-time-value {
     font-size: clamp(68px, 22vw, 150px);
   }
 

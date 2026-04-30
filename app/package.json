@@ -1,5 +1,5 @@
 {
-  "name": "app",
+  "name": "vibe-time",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "measure:dev": "powershell -ExecutionPolicy Bypass -File ./scripts/measure-tauri-dev.ps1",
     "preview": "vite preview",
     "tauri": "tauri"
   },

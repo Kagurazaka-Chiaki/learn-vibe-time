@@ -5,7 +5,7 @@ import DatePanel from "./DatePanel";
 import SyncStatus from "./SyncStatus";
 import SettingsPanel from "./SettingsPanel";
 import { buildSunLine } from "../domain/solar";
-import { formatChineseDate, formatClock, getDayOfYear, getLocalDateParts } from "../domain/timeFormat";
+import { formatChineseDate, formatClockParts, getDayOfYear, getLocalDateParts } from "../domain/timeFormat";
 import { useClock } from "../hooks/useClock";
 import { useClockPreferences } from "../hooks/useClockPreferences";
 import { useSelectedCity } from "../hooks/useSelectedCity";
@@ -16,8 +16,8 @@ export default function ClockPage() {
   const { activeCity, activeCityKey, setActiveCityKey } = useSelectedCity();
   const { preferences, setShowSeconds, setHourMode } = useClockPreferences();
 
-  const clockText = useMemo(
-    () => formatClock(now, activeCity.timeZone, preferences),
+  const clockParts = useMemo(
+    () => formatClockParts(now, activeCity.timeZone, preferences),
     [now, activeCity.timeZone, preferences],
   );
   const dateText = useMemo(() => formatChineseDate(now, activeCity.timeZone), [now, activeCity.timeZone]);
@@ -43,7 +43,7 @@ export default function ClockPage() {
         <div className="location-line">现在的{activeCity.displayLabel ?? activeCity.label}, 时间:</div>
 
         <section className="clock-main" aria-label="当前城市时间">
-          <ClockDisplay clockText={clockText} />
+          <ClockDisplay dayPeriod={clockParts.dayPeriod} time={clockParts.time} label={clockParts.text} />
           <DatePanel dateText={dateText} tagText={activeCity.tagline ?? `Day ${dayOfYear}`} sunLine={sunLine} />
           <CityRail activeCity={activeCity} now={now} hourMode={preferences.hourMode} onSelectCity={setActiveCityKey} />
         </section>

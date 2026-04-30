@@ -83,7 +83,7 @@ Checks run:
 - `git status --short`
 
 Result:
-- Renamed the desktop app metadata to `Clean Time`.
+- Renamed the desktop app metadata to `Vibe Time`.
 - Set a more suitable default and minimum Tauri window size.
 - Improved responsive clock and city rail sizing.
 - Added semantic clock/status markup and focus-visible city button behavior.

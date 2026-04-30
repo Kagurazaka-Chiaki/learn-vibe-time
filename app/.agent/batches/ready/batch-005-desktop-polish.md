@@ -50,7 +50,7 @@ Stop when listed tasks are done or blocked, or visual polish requires manual des
 
 Completed on 2026-04-29.
 
-- Renamed the Tauri product/window title to `Clean Time`.
+- Renamed the Tauri product/window title to `Vibe Time`.
 - Set desktop window size to `1100x720` with `720x480` minimum size.
 - Updated Cargo description.
 - Improved responsive clock sizing, city card sizing, focus style, and semantic clock/status markup.

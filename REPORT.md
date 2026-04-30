@@ -1,104 +1,46 @@
 # 项目报告
 
-## 初始状态
+## 项目定位
 
-这个仓库是一个小型 Tauri + React 应用，加上 `iota-agnt01` agent harness 参考子模块。
+`Vibe Time` 是一个 desktop clock：完全由 `iota-agnt001` 驱动开发，不含人工编写的应用代码。它基于 Tauri + React，目标是提供一个无广告、轻量、可长期运行的桌面时钟，不需要为了看时间再打开一个 Chrome 标签页。
 
-- `app/` 是真实应用项目。
-- `iota-agnt01/` 是 agent harness 参考子模块，不是当前 app 的执行控制面。
-- `app/.agent/` 是本项目后续 agent 开发使用的本地控制面。
-- 根目录 `.gitignore` 用来排除依赖、构建产物、临时文件、日志和密钥。
+本仓库仍保留 `iota-agnt01/` 作为实际 agent harness 参考子模块；`iota-agnt001` 是当前项目对外描述中的 agent 驱动开发定位。
 
-当前已有一次初始化提交：`chore(repo): initial project scaffold`。
+## 仓库结构
 
-## 产品方向
+- `app/`：真实应用项目，产品名为 `Vibe Time`。
+- `iota-agnt01/`：agent harness 参考子模块，不是当前 app 的执行控制面。
+- `app/.agent/`：本项目后续 agent 开发使用的本地控制面。
+- `app/scripts/measure-tauri-dev.ps1`：Tauri dev 资源占用采样脚本。
+- 根目录 `.gitignore`：排除依赖、构建产物、临时文件、日志和密钥。
 
-目标是做一个 Time.is-inspired 的无广告时钟应用。它应当保留精确时间、城市时间、日期、太阳升落等核心价值，同时避免广告和无关信息；开发时可以作为 Web app 运行，日常使用时可以通过 Tauri 作为桌面 app 运行，不需要额外开一个 Chrome 标签页。
+## 当前能力
 
-这个项目也是 agent 工作流试验项目。它足够小，适合拆成清晰任务；又有前端、Rust/Tauri、时间正确性、桌面体验和测试，能检验 agent 是否能长期保持工程质量。
+- 主界面已移除 starter UI，直接进入时钟体验。
+- 前端已拆分为 `components/`、`domain/`、`hooks/`、`data/` 和 `styles/`。
+- `TimeIsWidget.tsx` 只保留兼容导出，不再是巨型文件。
+- Rust/Tauri 提供 `sync_utc_time` 授时命令。
+- 授时源优先尝试中国科学院国家授时中心 NTP：`ntp.ntsc.ac.cn:123`。
+- 前端支持本地时间回退、最近同步时间、手动重新同步。
+- 支持城市选择、显示秒、12/24 小时制，并用 `localStorage` 保存偏好。
+- 已加入 Vitest 覆盖时间格式、太阳计算和同步状态。
 
-## 当前问题
+## 当前注意事项
 
-- `app/src/TimeIsWidget.tsx` 有 684 行，把城市数据、时间同步、日期格式化、太阳计算、样式和 UI 都塞在一个文件里，维护成本过高。
-- `app/src/App.tsx` 仍保留 Vite/Tauri/React starter UI 和 greet 示例。
-- 时间同步逻辑在前端 fetch 中，桌面 app 场景下不够稳定，也不利于复用 Rust 能力。
-- 太阳时间计算缺少极端情况保护，`hourAngle` 可能产生不可用结果。
-- 日期格式化需要修复午夜 `24:xx:xx` 风险。
-- 没有单元测试，重构时间逻辑风险较高。
-- Tauri 产品名、窗口标题和窗口尺寸仍是 starter 配置。
-
-## MVP 路线
-
-| MVP | 目标 | 完成标准 | 预计 |
-| --- | --- | --- | --- |
-| MVP 0 | 项目可交接 | 中文报告、任务队列、后续 batch 清晰 | 1-1.5h |
-| MVP 1 | 可维护前端 | 拆分巨型组件，移除 starter UI | 3-4h |
-| MVP 2 | 正确时间核心 | Rust/Tauri 授时，前端展示和回退 | 3-5h |
-| MVP 3 | 桌面产品化 | Tauri 名称、窗口、响应式和可访问性 | 1.5-2h |
-| MVP 4 | 测试稳定性 | Vitest 覆盖时间、太阳、同步纯函数 | 2-3h |
-| MVP 5 | 可用性增强 | 默认城市持久化、基础设置、离线状态 | 3-4h |
-| MVP N | 后续扩展 | 多城市管理、置顶小窗、托盘、快捷键、主题、发布包 | 按批推进 |
-
-## 目标架构
-
-前端目标结构：
-
-```text
-app/src/
-  App.tsx
-  styles/clock.css
-  data/cities.ts
-  domain/timeFormat.ts
-  domain/solar.ts
-  domain/sync.ts
-  hooks/useClock.ts
-  hooks/useSelectedCity.ts
-  components/ClockPage.tsx
-  components/ClockDisplay.tsx
-  components/DatePanel.tsx
-  components/SyncStatus.tsx
-  components/CityRail.tsx
-```
-
-Rust/Tauri 目标：
-
-```text
-app/src-tauri/src/time_sync.rs
-```
-
-Tauri command：
-
-```text
-sync_utc_time -> { utcMs, capturedAtMs, precisionMs, sourceName }
-```
-
-前端只根据返回值计算 offset 并展示：
-
-```text
-offsetMs = utcMs - capturedAtMs
-displayNow = Date.now() + offsetMs
-```
-
-## 执行队列
-
-1. Batch 001：中文报告与任务控制面。
-2. Batch 002：前端拆分与 starter 清理。
-3. Batch 003：Rust 授时核心。
-4. Batch 004：测试与正确性。
-5. Batch 005：桌面产品化。
-6. Batch 006：基础可用性增强。
-
-每个 batch 完成后创建本地 commit。后续如果使用 5.4 medium，应按 batch 顺序推进，不跨 batch 做额外重构。
+- 12 小时制下，上午/下午与数字时间已拆分为不同元素，避免巨大字号挤压。
+- Tauri dev 资源测量脚本默认只统计 `Vibe Time` / `vibe-time` / `app` 主进程及其子进程树。
+- 如果 WebView2 不挂在主进程树下，可使用 `-IncludeAllWebView2` 做保守估算。
+- `iota-agnt01` 是实际目录名和 submodule 名，暂不重命名。
 
 ## 验收原则
 
-- 主界面不再显示 starter UI。
-- `TimeIsWidget.tsx` 不再是巨型文件；如果保留，只作为兼容导出。
+- 主界面不显示 Vite/Tauri/React starter UI。
 - 网络授时成功时显示授时源与精度。
 - 网络授时失败时继续显示本地时间，并明确提示本地回退。
 - 城市切换、日期、太阳信息在 Sydney/Beijing/Tokyo 等城市下可用。
-- `bun run build`、`bun run typecheck`、`bun run test` 在相关 batch 后通过。
+- `bun run typecheck`、`bun run test`、`bun run build` 通过。
 - Rust/Tauri 相关改动通过 `cargo check`。
+- 资源占用应接近：主进程空闲 CPU < 1%，主进程 WorkingSet 约几十 MB；完整占用需包含 WebView2。
 
 ## 不做事项
 

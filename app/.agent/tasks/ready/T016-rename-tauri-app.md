@@ -14,7 +14,7 @@ Allowed files:
 
 ## Steps
 
-1. Set product name and window title to `Clean Time`.
+1. Set product name and window title to `Vibe Time`.
 2. Set default window size to `1100x720`.
 3. Set minimum window size to `720x480`.
 4. Update Cargo package description.
