@@ -2,7 +2,11 @@
 
 This file defines rules for long-running agent sessions.
 
-The long-term target is an 8-hour unattended run for small, well-scoped projects. That target is only safe when the task chain is already decision-complete, auditable, recoverable, and backed by local checkpoint commits.
+The maximum unattended runtime is 8 hours for small, well-scoped projects. This is an upper bound, not the default. It is only safe when the task chain is already decision-complete, auditable, recoverable, and backed by local checkpoint commits.
+
+For this project, prefer 45-90 minute batch runs until the task queue, checks, and checkpoint cadence have proven stable.
+
+Observed project note: based on the current conversation history, the longest single Vibe Time agent run was 30 minutes and 18 seconds. That is a valid unattended outcome because the active scope was small and finished early. Do not expand scope just to consume the 8-hour maximum.
 
 ## Run Modes
 
@@ -87,6 +91,8 @@ For early use, choose:
 
 - `conservative`
 - `batch-driven`
+- 45-90 minute time budget per normal batch
+- 8 hours maximum only when the readiness gate passes
 - checkpoint commit after each verified batch or milestone
 - AI review after each verified batch or milestone
 - detailed run shards in `.agent/logs/` for long sessions

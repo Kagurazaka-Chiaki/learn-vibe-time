@@ -68,3 +68,4 @@ Read when relevant:
 - `.agent/prompts/split-goal-into-tasks.md`
 - `.agent/prompts/run-batch.md`
 - `.agent/prompts/review-run.md`
+- `.agent/prompts/unattended-three-prompt-flow.md`

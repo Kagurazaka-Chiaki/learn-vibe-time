@@ -58,3 +58,7 @@ Before using an agent to change this project, read:
 New work should be described as small tasks under `.agent/tasks/ready/`, grouped
 into a batch under `.agent/batches/ready/`, and executed through the batch
 protocol. Business code changes should stay inside the active task scope.
+
+## License
+
+MIT.

@@ -31,6 +31,9 @@
 - Tauri dev 资源测量脚本默认只统计 `Vibe Time` / `vibe-time` / `app` 主进程及其子进程树。
 - 如果 WebView2 不挂在主进程树下，可使用 `-IncludeAllWebView2` 做保守估算。
 - `iota-agnt01` 是实际目录名和 submodule 名，暂不重命名。
+- 当前推荐的无人值守方式是 45-90 分钟 batch 短跑；最大无人值守运行时间上限是 8 小时，但只允许在任务、检查、checkpoint、review 和停止条件都明确时使用。
+- 按当前对话记录核对，本项目最长单次 agent 运行时间是 30 分 18 秒；没有达到 8 小时是因为任务简单且 active batch 已完成，属于正常提前结束。
+- 实际操作通常由三类 prompt 完成：拆任务、跑 batch、复查交接。示例文件是 `app/.agent/prompts/unattended-three-prompt-flow.md`。
 
 ## 验收原则
 
@@ -41,13 +44,6 @@
 - `bun run typecheck`、`bun run test`、`bun run build` 通过。
 - Rust/Tauri 相关改动通过 `cargo check`。
 - 资源占用应接近：主进程空闲 CPU < 1%，主进程 WorkingSet 约几十 MB；完整占用需包含 WebView2。
-
-## 不做事项
-
-- 不做官方 Time.is 的像素级复制。
-- 不使用 Time.is 品牌、商标或官方关联表述。
-- MVP 阶段不做账号、云同步、广告、付费服务或自动发布。
-- 不引入大型状态管理、后端服务或复杂 UI 框架。
 
 ## 提交策略
 

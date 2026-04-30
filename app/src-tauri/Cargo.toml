@@ -3,6 +3,7 @@ name = "app"
 version = "0.1.0"
 description = "A desktop clock fully driven by iota-agnt001 with no human-written application code"
 authors = ["you"]
+license = "MIT"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
