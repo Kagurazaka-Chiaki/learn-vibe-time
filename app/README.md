@@ -2,8 +2,9 @@
 
 Vibe Time is a Tauri + React desktop clock positioned as a fully
 `iota-agnt001`-driven application with no human-written application code. It is
-an ad-free, Time.is-inspired clock experience for daily desktop use, so checking
-the current time does not require keeping another Chrome tab open.
+an ad-free desktop clock that takes design cues from Time.is for daily desktop
+use, so checking the current time does not require keeping another Chrome tab
+open.
 
 This project is also the trial project for the local `iota-agnt01` agent
 harness. The codebase is intentionally small enough for task-driven agent work
