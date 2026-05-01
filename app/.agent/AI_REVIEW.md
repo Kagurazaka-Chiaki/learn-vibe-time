@@ -27,6 +27,14 @@ The reviewer checks:
 - proposed skill quality, overfitting, secret leakage, and permission expansion
 - unresolved human decisions
 
+For release or time-sync work, the reviewer also checks:
+
+- CSP is explicit and compatible with Tauri IPC.
+- Bundle identifier, product naming, version, and artifact paths are consistent.
+- Network sync copy uses estimated-error wording instead of precision claims.
+- SNTP schema includes offset, delay, estimated error, source, and failure detail handling.
+- Failed sync attempts do not update the latest successful sync timestamp.
+
 ## Report Output
 
 Write reports under `.agent/reports/`.

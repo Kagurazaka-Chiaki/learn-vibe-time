@@ -20,17 +20,21 @@ function formatLastSync(lastSyncAt: number | null): string {
 }
 
 export default function SyncStatus({ syncState, onResync }: SyncStatusProps) {
-  const { driftText, precisionText, sourceText } = buildDriftCopy(syncState);
+  const { driftText, estimateText, sourceText, offsetText, delayText, detailText } = buildDriftCopy(syncState);
 
   return (
     <header className="sync-status" aria-label="授时状态">
       <div className="sync-drift">{driftText}</div>
-      <div className="sync-precision">{precisionText}</div>
+      <div className="sync-estimate">{estimateText}</div>
       <div className="sync-meta">
         <span>{sourceText}</span>
-        <span>最近同步: {formatLastSync(syncState.lastSyncAt)}</span>
+        <span>{offsetText}</span>
+        <span>{delayText}</span>
+        <span>最近成功同步: {formatLastSync(syncState.lastSuccessfulSyncAt)}</span>
+        {syncState.lastFailureAt === null ? null : <span>最近失败: {formatLastSync(syncState.lastFailureAt)}</span>}
         <button type="button" onClick={onResync}>重新同步</button>
       </div>
+      {detailText ? <div className="sync-detail">{detailText}</div> : null}
     </header>
   );
 }

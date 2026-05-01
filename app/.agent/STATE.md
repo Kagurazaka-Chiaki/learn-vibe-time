@@ -2,8 +2,8 @@
 
 Current batch: none
 Current task: none
-Last successful task: T021
-Last run: 2026-04-30 T021 preferences and offline states
+Last successful task: T028
+Last run: 2026-05-01 T022/T028 continuous release and sync hardening
 
 ## Mode
 

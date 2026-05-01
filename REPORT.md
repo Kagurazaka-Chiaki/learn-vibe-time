@@ -21,7 +21,7 @@
 - `TimeIsWidget.tsx` 只保留兼容导出，不再是巨型文件。
 - Rust/Tauri 提供 `sync_utc_time` 授时命令。
 - 授时源优先尝试中国科学院国家授时中心 NTP：`ntp.ntsc.ac.cn:123`。
-- 前端支持本地时间回退、最近同步时间、手动重新同步。
+- 前端支持本地时间回退、最近成功同步时间、同步失败详情和手动重新同步。
 - 支持城市选择、显示秒、12/24 小时制，并用 `localStorage` 保存偏好。
 - 已加入 Vitest 覆盖时间格式、太阳计算和同步状态。
 
@@ -38,8 +38,8 @@
 ## 验收原则
 
 - 主界面不显示 Vite/Tauri/React starter UI。
-- 网络授时成功时显示授时源与精度。
-- 网络授时失败时继续显示本地时间，并明确提示本地回退。
+- 网络授时成功时显示授时源、偏移、网络延迟估计和同步估计误差。
+- 网络授时失败时继续显示本地时间，并明确提示本地回退和失败详情。
 - 城市切换、日期、太阳信息在 Sydney/Beijing/Tokyo 等城市下可用。
 - `bun run typecheck`、`bun run test`、`bun run build` 通过。
 - Rust/Tauri 相关改动通过 `cargo check`。

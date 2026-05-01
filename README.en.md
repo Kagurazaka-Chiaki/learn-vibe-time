@@ -4,7 +4,7 @@
 
 `Vibe Time` is a desktop clock fully driven by `iota-agnt001`, with no human-written application code.
 
-It is built with Tauri + React and takes design cues from the clear large-time experience of Time.is, while aiming to provide a clean, lightweight, long-running desktop clock. It keeps the useful parts of a precise clock experience: current time, city time, date, sunrise/sunset information, sync status, and local fallback, without requiring another Chrome tab.
+It is built with Tauri + React and takes design cues from the clear large-time experience of Time.is, while aiming to provide a clean, lightweight, long-running desktop clock. It keeps current time, city time, date, sunrise/sunset information, sync status, and local fallback, without requiring another Chrome tab.
 
 This repository is also an experiment in agent-driven development. `iota-agnt01/` is the referenced agent harness submodule, and `app/.agent/` is the application-specific local control plane.
 
@@ -17,7 +17,7 @@ Based on the current conversation history, the longest single agent run for this
 - `TimeIsWidget.tsx` is only a compatibility export.
 - Rust/Tauri provides the `sync_utc_time` command.
 - The first time source is China National Time Service Center NTP: `ntp.ntsc.ac.cn:123`.
-- The app supports local-time fallback, last sync time, and manual resync.
+- The app supports local-time fallback, last successful sync time, sync failure details, and manual resync.
 - City selection, seconds display, and 12/24-hour mode are persisted with `localStorage`.
 - In 12-hour mode, the day period label is rendered separately from the large numeric time.
 - A Tauri dev resource measurement script is included.

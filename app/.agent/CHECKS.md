@@ -25,6 +25,30 @@ rg "<pattern>"
 or batch explicitly allows it. Do not run dependency install commands as a
 fallback for build failures unless the active task explicitly permits it.
 
+Release-facing app changes should additionally run a Tauri debug build when the
+active batch allows it:
+
+```bash
+bun run tauri build --debug
+```
+
+The reviewer should inspect the resulting executable and installer names for
+version and product-name consistency.
+
+Time-sync changes should run both frontend and Rust checks when the active batch
+allows them:
+
+```bash
+bun run test
+cargo test
+```
+
+For sync UI work, search user-facing files for overconfident wording:
+
+```bash
+rg "精确度|精度|precision" src README.md README.en.md
+```
+
 ## Failure Record
 
 When a check fails, record:

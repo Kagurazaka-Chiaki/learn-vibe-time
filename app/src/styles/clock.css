@@ -20,13 +20,36 @@
   gap: 10px;
 }
 
+.interaction-probe {
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  z-index: 1000;
+  max-width: min(420px, calc(100vw - 20px));
+  padding: 7px 9px;
+  display: grid;
+  gap: 3px;
+  border: 1px solid #1f6feb;
+  background: rgba(255, 255, 255, 0.94);
+  color: #1f2937;
+  font-size: 12px;
+  line-height: 1.25;
+  pointer-events: none;
+}
+
+.interaction-probe span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .sync-drift {
   font-size: clamp(36px, 3.2vw, 74px);
   line-height: 1;
   font-weight: 800;
 }
 
-.sync-precision {
+.sync-estimate {
   font-size: clamp(26px, 2vw, 54px);
   line-height: 1.05;
   font-weight: 400;
@@ -41,6 +64,14 @@
   font-size: 14px;
   line-height: 1.3;
   color: #6d6d72;
+}
+
+.sync-detail {
+  max-width: 100%;
+  color: #6d3d25;
+  font-size: 13px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .sync-meta button,
@@ -64,6 +95,7 @@
   flex-wrap: wrap;
   gap: 10px 14px;
   color: #3d3d3d;
+  pointer-events: auto;
 }
 
 .settings-field,
@@ -72,6 +104,10 @@
   align-items: center;
   gap: 8px;
   font-size: 14px;
+}
+
+.settings-check {
+  cursor: pointer;
 }
 
 .settings-field select {
@@ -114,6 +150,7 @@
   font-size: clamp(30px, 2.25vw, 58px);
   line-height: 1.08;
   font-weight: 400;
+  pointer-events: none;
 }
 
 .clock-main {
@@ -138,6 +175,7 @@
   text-align: center;
   user-select: none;
   text-rendering: geometricPrecision;
+  pointer-events: none;
 }
 
 .clock-day-period {
@@ -190,6 +228,7 @@
   margin-top: 20px;
   text-align: right;
   color: #333333;
+  pointer-events: none;
 }
 
 .date-line {
@@ -224,6 +263,7 @@
   justify-content: flex-end;
   gap: 14px;
   flex-wrap: wrap;
+  pointer-events: auto;
 }
 
 .city-card {

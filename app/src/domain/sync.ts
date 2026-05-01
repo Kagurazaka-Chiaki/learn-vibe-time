@@ -2,10 +2,11 @@ import { invoke } from "@tauri-apps/api/core";
 import { formatAbsoluteSeconds, formatPrecision } from "./timeFormat";
 
 export type TimeSyncResponse = {
-  utcMs: number;
-  capturedAtMs: number;
-  precisionMs: number;
+  offsetMs: number;
+  delayMs: number;
+  estimatedErrorMs: number;
   sourceName: string;
+  sourceHost: string;
 };
 
 export type TimeSourceOption = {
@@ -16,16 +17,23 @@ export type TimeSourceOption = {
 
 export type SyncState = {
   offsetMs: number;
-  precisionMs: number;
+  delayMs: number;
+  estimatedErrorMs: number;
   synced: boolean;
   sourceName: string;
-  lastSyncAt: number | null;
+  sourceHost: string;
+  lastSuccessfulSyncAt: number | null;
+  lastFailureAt: number | null;
+  lastFailureDetails: string | null;
 };
 
 export type DriftCopy = {
   driftText: string;
-  precisionText: string;
+  estimateText: string;
   sourceText: string;
+  offsetText: string;
+  delayText: string;
+  detailText: string | null;
 };
 
 export const AUTO_TIME_SOURCE_ID = "auto";
@@ -43,24 +51,54 @@ export const FALLBACK_TIME_SOURCES: TimeSourceOption[] = [
   { id: "timeapi", name: "timeapi", kind: "httpJson" },
 ];
 
-export function createFallbackSyncState(lastSyncAt: number | null = Date.now()): SyncState {
+type FallbackSyncOptions = {
+  lastSuccessfulSyncAt?: number | null;
+  lastFailureAt?: number | null;
+  lastFailureDetails?: string | null;
+};
+
+export function createFallbackSyncState(options: FallbackSyncOptions = {}): SyncState {
   return {
     offsetMs: 0,
-    precisionMs: 0,
+    delayMs: 0,
+    estimatedErrorMs: 0,
     synced: false,
     sourceName: "本地系统时间",
-    lastSyncAt,
+    sourceHost: "",
+    lastSuccessfulSyncAt: options.lastSuccessfulSyncAt ?? null,
+    lastFailureAt: options.lastFailureAt ?? null,
+    lastFailureDetails: options.lastFailureDetails ?? null,
   };
 }
 
-export function createSyncedState(response: TimeSyncResponse, lastSyncAt = Date.now()): SyncState {
+export function createSyncedState(response: TimeSyncResponse, lastSuccessfulSyncAt = Date.now()): SyncState {
   return {
-    offsetMs: response.utcMs - response.capturedAtMs,
-    precisionMs: response.precisionMs,
+    offsetMs: response.offsetMs,
+    delayMs: response.delayMs,
+    estimatedErrorMs: response.estimatedErrorMs,
     synced: true,
     sourceName: response.sourceName,
-    lastSyncAt,
+    sourceHost: response.sourceHost,
+    lastSuccessfulSyncAt,
+    lastFailureAt: null,
+    lastFailureDetails: null,
   };
+}
+
+export function getSyncErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  if (typeof error === "string") {
+    return error;
+  }
+
+  try {
+    return JSON.stringify(error);
+  } catch {
+    return "unknown sync error";
+  }
 }
 
 export async function listTimeSources(): Promise<TimeSourceOption[]> {
@@ -84,19 +122,26 @@ export function buildDriftCopy(syncState: SyncState): DriftCopy {
   if (!syncState.synced) {
     return {
       driftText: "正在使用本地系统时间。",
-      precisionText: "网络授时不可用。",
-      sourceText: "授时源: 本地系统时间 · 网络授时不可用",
+      estimateText: syncState.lastFailureAt === null ? "尚未完成网络同步。" : "最近网络同步失败。",
+      sourceText: "授时源: 本地系统时间",
+      offsetText: "本地偏移: 未使用网络估计",
+      delayText: "网络延迟估计: 不可用",
+      detailText: syncState.lastFailureDetails ? `详情：${syncState.lastFailureDetails}` : null,
     };
   }
 
   const offsetAbsMs = Math.abs(syncState.offsetMs);
   const driftText = offsetAbsMs < 50
-    ? "您的系统时间基本准确。"
+    ? "系统时间与网络授时源基本一致。"
     : `您的系统时间${syncState.offsetMs >= 0 ? "慢了" : "快了"} ${formatAbsoluteSeconds(syncState.offsetMs)} 秒钟。`;
+  const sourceHost = syncState.sourceHost ? ` (${syncState.sourceHost})` : "";
 
   return {
     driftText,
-    precisionText: `同步精确度为 ±${formatPrecision(syncState.precisionMs)} 秒钟。`,
-    sourceText: `授时源: ${syncState.sourceName} · 精度 ±${formatPrecision(syncState.precisionMs)} 秒`,
+    estimateText: `同步估计误差约 ±${formatPrecision(syncState.estimatedErrorMs)} 秒钟。`,
+    sourceText: `授时源: ${syncState.sourceName}${sourceHost}`,
+    offsetText: offsetAbsMs < 50 ? "本地偏移: 小于 0.1 秒" : `本地偏移: ${syncState.offsetMs >= 0 ? "慢" : "快"} ${formatAbsoluteSeconds(syncState.offsetMs)} 秒`,
+    delayText: `网络延迟估计: ${formatPrecision(syncState.delayMs)} 秒`,
+    detailText: null,
   };
 }

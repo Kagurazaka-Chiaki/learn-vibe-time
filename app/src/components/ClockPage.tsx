@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import CityRail from "./CityRail";
 import ClockDisplay from "./ClockDisplay";
 import DatePanel from "./DatePanel";
+import InteractionProbe from "./InteractionProbe";
 import SyncStatus from "./SyncStatus";
 import SettingsPanel from "./SettingsPanel";
 import { listTimeSources, type TimeSourceOption } from "../domain/sync";
@@ -11,6 +12,8 @@ import { useClock } from "../hooks/useClock";
 import { useClockPreferences } from "../hooks/useClockPreferences";
 import { useSelectedCity } from "../hooks/useSelectedCity";
 import "../styles/clock.css";
+
+const SHOW_INTERACTION_PROBE = import.meta.env.VITE_INTERACTION_PROBE === "1";
 
 export default function ClockPage() {
   const { activeCity, activeCityKey, setActiveCityKey } = useSelectedCity();
@@ -80,6 +83,7 @@ export default function ClockPage() {
   return (
     <main className="clock-page">
       <div className="clock-shell">
+        {SHOW_INTERACTION_PROBE ? <InteractionProbe /> : null}
         <SyncStatus syncState={syncState} onResync={syncOnce} />
         <SettingsPanel
           activeCityKey={activeCityKey}

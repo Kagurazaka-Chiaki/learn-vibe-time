@@ -24,6 +24,69 @@ Notes:
 
 ## Entries
 
+### 2026-05-01 - T022/T028 continuous release and sync hardening
+
+Status: DONE
+
+Modified files:
+- `src/components/ClockPage.tsx`
+- `src/components/InteractionProbe.tsx`
+- `src/components/SettingsPanel.tsx`
+- `src/components/SyncStatus.tsx`
+- `src/domain/sync.ts`
+- `src/domain/sync.test.ts`
+- `src/hooks/useClock.ts`
+- `src/styles/clock.css`
+- `src-tauri/tauri.conf.json`
+- `src-tauri/Cargo.toml`
+- `src-tauri/Cargo.lock`
+- `src-tauri/src/time_sync.rs`
+- `README.md`
+- `README.en.md`
+- `app/README.md`
+- `../REPORT.md`
+- `.agent/STATE.md`
+- `.agent/RUNLOG.md`
+- `.agent/REVIEW.md`
+- `.agent/AI_REVIEW.md`
+- `.agent/CHECKS.md`
+- `.agent/tasks/ready/T022-stabilize-current-ui-diagnostics.md`
+- `.agent/tasks/ready/T023-release-security-identity.md`
+- `.agent/tasks/ready/T024-sync-copy-no-overpromise.md`
+- `.agent/tasks/ready/T025-sync-failure-details-ui.md`
+- `.agent/tasks/ready/T026-sntp-four-timestamps.md`
+- `.agent/tasks/ready/T027-display-offset-delay-source.md`
+- `.agent/tasks/ready/T028-agent-review-docs.md`
+- `.agent/batches/ready/batch-007-release-stabilization.md`
+- `.agent/batches/ready/batch-008-sync-copy-failure-ui.md`
+- `.agent/batches/ready/batch-009-sntp-four-timestamps.md`
+- `.agent/batches/ready/batch-010-agent-review-docs.md`
+- `.agent/reports/ai-review-20260501-continuous-release-sync-hardening.md`
+
+Checks run:
+- `bun run typecheck`
+- `bun run test`
+- `bun run build`
+- `cargo test`
+- `bun run tauri build --debug`
+- `rg "精确度|精度" app/src README.md README.en.md app/README.md REPORT.md -n`
+- `git diff --stat`
+
+Result:
+- Added environment-gated interaction diagnostics and kept normal builds from rendering the probe.
+- Updated release identity to `com.cmy20.vibetime` and changed debug artifacts to `vibe-time` naming.
+- Replaced disabled CSP with an explicit Tauri-compatible CSP and dev CSP.
+- Replaced sync precision copy with estimated-error and network-delay wording.
+- Added sync failure details and separated latest successful sync from latest failure.
+- Implemented SNTP four-timestamp offset and delay calculation in Rust.
+- Updated review docs to check release security and sync-trust claims.
+- All listed build and test checks passed after rerunning Rust checks outside the sandbox due to Windows target cache access errors.
+
+Notes:
+- No dependency install, push, signing, or checkpoint commit was performed.
+- Old debug artifacts named `vibe_time_*` may still exist in `target/` from previous builds; new artifacts are named `vibe-time_*`.
+- AI review report: `.agent/reports/ai-review-20260501-continuous-release-sync-hardening.md`.
+
 ### 2026-04-30 - T019/T021 preferences and offline states
 
 Status: DONE

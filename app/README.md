@@ -17,7 +17,7 @@ correctness, desktop UX, and test coverage.
 - `src/TimeIsWidget.tsx` is now only a compatibility export.
 - The main UI is split across `src/components/`, `src/domain/`, `src/hooks/`,
   `src/data/`, and `src/styles/`.
-- Rust/Tauri provides the UTC synchronization command.
+- Rust/Tauri provides the UTC synchronization command with network delay and estimated error reporting.
 - The agent control plane is initialized under `.agent/`.
 
 ## Tech Stack

@@ -4,7 +4,7 @@
 
 `Vibe Time` 是一个 desktop clock：完全由 `iota-agnt001` 驱动开发，不含人工编写的应用代码。
 
-它基于 Tauri + React，设计上参考 Time.is 的清晰大时间体验，目标是提供一个无广告、轻量、可长期运行的桌面时钟。它保留精确时间、城市时间、日期、太阳升落、授时状态等核心能力，让日常看时间不需要再打开一个 Chrome 标签页。
+它基于 Tauri + React，设计上参考 Time.is 的清晰大时间体验，目标是提供一个无广告、轻量、可长期运行的桌面时钟。它保留当前时间、城市时间、日期、太阳升落、授时状态等核心能力，让日常看时间不需要再打开一个 Chrome 标签页。
 
 本仓库同时也是 agent 驱动开发工作流的试验项目。`iota-agnt01/` 是实际引入的 agent harness 参考子模块，`app/.agent/` 是当前应用自己的本地控制面。
 
@@ -18,7 +18,7 @@
 - Rust/Tauri 提供 `sync_utc_time` 授时命令，并支持 `list_time_sources` 获取可选授时源。
 - 支持自动授时源 fallback，也可以手动切换预设源。
 - 当前预设授时源包括 `au.pool.ntp.org`、`cn.pool.ntp.org`、`time.cloudflare.com`、`time.google.com`、`ntp.tencent.com`、`ntp.aliyun.com`、`pool.ntp.org`、国家授时中心 NTP，以及 HTTP JSON 备用源。
-- 支持本地时间回退、最近同步时间和手动重新同步。
+- 支持本地时间回退、最近成功同步时间、同步失败详情和手动重新同步。
 - 支持城市选择、显示秒、12/24 小时制、授时源选择、纯净模式，并用 `localStorage` 保存偏好。
 - 12 小时制下，上午/下午与数字时间分开排版，避免巨大字号挤压。
 - 时间字号会根据窗口大小和文本长度自适应，普通模式和纯净模式都尽量填满但不溢出。
@@ -31,16 +31,16 @@
 个人使用时可以直接运行 release 可执行文件：
 
 ```text
-app/src-tauri/target/release/app.exe
+app/src-tauri/target/release/vibe-time.exe
 ```
 
 如果需要安装包，Windows NSIS 输出文件名为：
 
 ```text
-app/src-tauri/target/release/bundle/nsis/vibe_time_0.1.0_x64-setup.exe
+app/src-tauri/target/release/bundle/nsis/vibe-time_0.1.0_x64-setup.exe
 ```
 
-直接运行 `app.exe` 适合自己使用；安装包适合分发，会创建正式安装记录和快捷方式。
+直接运行 `vibe-time.exe` 适合自己使用；安装包适合分发，会创建正式安装记录和快捷方式。窗口标题和应用内展示名称保持为 `Vibe Time`。
 
 ## 仓库结构
 

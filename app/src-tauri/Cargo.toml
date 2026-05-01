@@ -1,5 +1,5 @@
 [package]
-name = "app"
+name = "vibe-time"
 version = "0.1.0"
 description = "A desktop clock fully driven by iota-agnt001 with no human-written application code"
 authors = ["you"]

@@ -16,6 +16,35 @@ type SettingsPanelProps = {
   onZenModeChange: (zenMode: boolean) => void;
 };
 
+type SettingsCheckboxProps = {
+  checked: boolean;
+  label: string;
+  onCheckedChange: (checked: boolean) => void;
+};
+
+function SettingsCheckbox({ checked, label, onCheckedChange }: SettingsCheckboxProps) {
+  return (
+    <label
+      className="settings-check"
+      onClick={(event) => {
+        if (event.target instanceof HTMLInputElement) {
+          return;
+        }
+
+        event.preventDefault();
+        onCheckedChange(!checked);
+      }}
+    >
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onCheckedChange(event.currentTarget.checked)}
+      />
+      <span>{label}</span>
+    </label>
+  );
+}
+
 export default function SettingsPanel({
   activeCityKey,
   showSeconds,
@@ -31,9 +60,14 @@ export default function SettingsPanel({
 }: SettingsPanelProps) {
   return (
     <section className="settings-panel" aria-label="时钟设置">
-      <label className="settings-field">
+      <label className="settings-field" htmlFor="settings-city">
         <span>城市</span>
-        <select value={activeCityKey} onChange={(event) => onSelectCity(event.currentTarget.value)}>
+        <select
+          id="settings-city"
+          name="city"
+          value={activeCityKey}
+          onChange={(event) => onSelectCity(event.currentTarget.value)}
+        >
           {CITIES.map((city) => (
             <option key={city.key} value={city.key}>
               {city.displayLabel ?? city.label}
@@ -42,9 +76,14 @@ export default function SettingsPanel({
         </select>
       </label>
 
-      <label className="settings-field settings-source">
+      <label className="settings-field settings-source" htmlFor="settings-time-source">
         <span>授时源</span>
-        <select value={timeSourceId} onChange={(event) => onTimeSourceChange(event.currentTarget.value)}>
+        <select
+          id="settings-time-source"
+          name="timeSource"
+          value={timeSourceId}
+          onChange={(event) => onTimeSourceChange(event.currentTarget.value)}
+        >
           <option value={AUTO_TIME_SOURCE_ID}>自动选择</option>
           {timeSources.map((source) => (
             <option key={source.id} value={source.id}>
@@ -54,23 +93,9 @@ export default function SettingsPanel({
         </select>
       </label>
 
-      <label className="settings-check">
-        <input
-          type="checkbox"
-          checked={showSeconds}
-          onChange={(event) => onShowSecondsChange(event.currentTarget.checked)}
-        />
-        <span>显示秒</span>
-      </label>
+      <SettingsCheckbox checked={showSeconds} label="显示秒" onCheckedChange={onShowSecondsChange} />
 
-      <label className="settings-check">
-        <input
-          type="checkbox"
-          checked={zenMode}
-          onChange={(event) => onZenModeChange(event.currentTarget.checked)}
-        />
-        <span>纯净模式</span>
-      </label>
+      <SettingsCheckbox checked={zenMode} label="纯净模式" onCheckedChange={onZenModeChange} />
 
       <div className="settings-segment" role="group" aria-label="小时制">
         <button
