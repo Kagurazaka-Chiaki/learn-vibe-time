@@ -37,7 +37,7 @@ app/src-tauri/target/release/vibe-time.exe
 如果需要安装包，Windows NSIS 输出文件名为：
 
 ```text
-app/src-tauri/target/release/bundle/nsis/vibe-time_0.1.0_x64-setup.exe
+app/src-tauri/target/release/bundle/nsis/vibe-time_0.1.1_x64-setup.exe
 ```
 
 直接运行 `vibe-time.exe` 适合自己使用；安装包适合分发，会创建正式安装记录和快捷方式。窗口标题和应用内展示名称保持为 `Vibe Time`。

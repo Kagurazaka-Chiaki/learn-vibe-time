@@ -1,6 +1,6 @@
 [package]
 name = "vibe-time"
-version = "0.1.0"
+version = "0.1.1"
 description = "A desktop clock fully driven by iota-agnt001 with no human-written application code"
 authors = ["you"]
 license = "MIT"
