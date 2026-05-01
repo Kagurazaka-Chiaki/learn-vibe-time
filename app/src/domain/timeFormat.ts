@@ -12,6 +12,7 @@ export type ClockHourMode = "12" | "24";
 
 export type FormatTimeOptions = {
   showSeconds?: boolean;
+  showMilliseconds?: boolean;
   hourMode?: ClockHourMode;
 };
 
@@ -72,7 +73,8 @@ export function getDayOfYear(year: number, month: number, day: number): number {
 }
 
 export function formatTimePartsInZone(date: Date, timeZone: string, options: FormatTimeOptions = {}): ClockDisplayParts {
-  const showSeconds = options.showSeconds ?? true;
+  const showMilliseconds = options.showMilliseconds ?? false;
+  const showSeconds = showMilliseconds || (options.showSeconds ?? true);
   const hourMode = options.hourMode ?? "24";
   const formatOptions: Intl.DateTimeFormatOptions = {
     timeZone,
@@ -96,7 +98,10 @@ export function formatTimePartsInZone(date: Date, timeZone: string, options: For
   }
 
   const hour = hourMode === "24" ? normalizeHour(map.hour) : map.hour;
-  const time = showSeconds ? `${hour}:${map.minute}:${map.second}` : `${hour}:${map.minute}`;
+  const millisecondText = String(date.getMilliseconds()).padStart(3, "0");
+  const time = showMilliseconds
+    ? `${hour}:${map.minute}:${map.second}.${millisecondText}`
+    : showSeconds ? `${hour}:${map.minute}:${map.second}` : `${hour}:${map.minute}`;
   const dayPeriod = map.dayPeriod ?? "";
 
   return {

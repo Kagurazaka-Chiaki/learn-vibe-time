@@ -29,6 +29,7 @@ describe("useClockPreferences helpers", () => {
 
     expect(preferences).toEqual({
       showSeconds: false,
+      showMilliseconds: false,
       hourMode: "12",
       timeSourceId: "cloudflare",
       zenMode: false,
@@ -45,6 +46,7 @@ describe("useClockPreferences helpers", () => {
     const storage = new MemoryStorage();
     const preferences: ClockPreferences = {
       showSeconds: true,
+      showMilliseconds: true,
       hourMode: "24",
       timeSourceId: "auto",
       zenMode: true,

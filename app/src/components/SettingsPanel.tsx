@@ -5,12 +5,14 @@ import type { ClockHourMode } from "../domain/timeFormat";
 type SettingsPanelProps = {
   activeCityKey: string;
   showSeconds: boolean;
+  showMilliseconds: boolean;
   hourMode: ClockHourMode;
   timeSourceId: string;
   timeSources: TimeSourceOption[];
   zenMode: boolean;
   onSelectCity: (cityKey: string) => void;
   onShowSecondsChange: (showSeconds: boolean) => void;
+  onShowMillisecondsChange: (showMilliseconds: boolean) => void;
   onHourModeChange: (hourMode: ClockHourMode) => void;
   onTimeSourceChange: (sourceId: string) => void;
   onZenModeChange: (zenMode: boolean) => void;
@@ -48,12 +50,14 @@ function SettingsCheckbox({ checked, label, onCheckedChange }: SettingsCheckboxP
 export default function SettingsPanel({
   activeCityKey,
   showSeconds,
+  showMilliseconds,
   hourMode,
   timeSourceId,
   timeSources,
   zenMode,
   onSelectCity,
   onShowSecondsChange,
+  onShowMillisecondsChange,
   onHourModeChange,
   onTimeSourceChange,
   onZenModeChange,
@@ -94,6 +98,8 @@ export default function SettingsPanel({
       </label>
 
       <SettingsCheckbox checked={showSeconds} label="显示秒" onCheckedChange={onShowSecondsChange} />
+
+      <SettingsCheckbox checked={showMilliseconds} label="显示毫秒" onCheckedChange={onShowMillisecondsChange} />
 
       <SettingsCheckbox checked={zenMode} label="纯净模式" onCheckedChange={onZenModeChange} />
 

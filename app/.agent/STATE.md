@@ -2,8 +2,8 @@
 
 Current batch: none
 Current task: none
-Last successful task: T028
-Last run: 2026-05-01 T022/T028 continuous release and sync hardening
+Last successful task: T031
+Last run: 2026-05-01 T029/T031 sync reliability and milliseconds
 
 ## Mode
 

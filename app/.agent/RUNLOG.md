@@ -24,6 +24,50 @@ Notes:
 
 ## Entries
 
+### 2026-05-01 - T029/T031 sync reliability and milliseconds
+
+Status: DONE
+
+Modified files:
+- `src/hooks/useClock.ts`
+- `src/hooks/useClock.test.ts`
+- `src/hooks/useClockPreferences.ts`
+- `src/hooks/useClockPreferences.test.ts`
+- `src/domain/timeFormat.ts`
+- `src/domain/timeFormat.test.ts`
+- `src/components/ClockPage.tsx`
+- `src/components/SettingsPanel.tsx`
+- `src-tauri/src/time_sync.rs`
+- `src-tauri/src/time_sync/sntp.rs`
+- `.agent/STATE.md`
+- `.agent/RUNLOG.md`
+- `.agent/tasks/ready/T029-prevent-stale-sync-overwrite.md`
+- `.agent/tasks/ready/T030-validate-and-split-sntp.md`
+- `.agent/tasks/ready/T031-optional-main-clock-milliseconds.md`
+- `.agent/batches/ready/batch-011-sync-reliability-and-milliseconds.md`
+- `.agent/reports/ai-review-20260501-batch-011-sync-reliability.md`
+
+Checks run:
+- `bun run typecheck`
+- `bun run test`
+- `bun run build`
+- `cargo fmt --check`
+- `cargo test`
+- `bun run tauri build --debug`
+- `git diff --check`
+
+Result:
+- Added latest-request guarding so stale sync success or failure cannot overwrite newer sync state.
+- Split SNTP query, timestamp conversion, formula, response validation, and tests into `src-tauri/src/time_sync/sntp.rs`.
+- Added SNTP response validation for mode, leap indicator, stratum, originate timestamp, receive timestamp, and transmit timestamp.
+- Added a default-off `showMilliseconds` preference and settings checkbox.
+- Main clock can render `HH:mm:ss.SSS`; city rail remains minute-only.
+- All listed checks passed after rerunning Rust/Tauri checks outside the sandbox due to Windows target cache access errors.
+
+Notes:
+- No dependency install, push, signing, release publishing, or artifact cleanup was performed.
+- AI review report: `.agent/reports/ai-review-20260501-batch-011-sync-reliability.md`.
+
 ### 2026-05-01 - T022/T028 continuous release and sync hardening
 
 Status: DONE

@@ -1,17 +1,33 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createFallbackSyncState, getSyncErrorMessage, syncUtcTime, type SyncState } from "../domain/sync";
 
 const RESYNC_INTERVAL_MS = 5 * 60 * 1000;
 const TICK_INTERVAL_MS = 250;
+const MILLIS_TICK_INTERVAL_MS = 33;
 
-export function useClock(timeSourceId: string) {
+export function isLatestSyncRequest(requestId: number, latestRequestId: number): boolean {
+  return requestId === latestRequestId;
+}
+
+export function useClock(timeSourceId: string, showMilliseconds = false) {
   const [syncState, setSyncState] = useState<SyncState>(() => createFallbackSyncState());
   const [renderNow, setRenderNow] = useState<number>(Date.now());
+  const latestSyncRequestIdRef = useRef(0);
 
   const syncOnce = useCallback(async () => {
+    const requestId = latestSyncRequestIdRef.current + 1;
+    latestSyncRequestIdRef.current = requestId;
+
     try {
-      setSyncState(await syncUtcTime(timeSourceId));
+      const nextSyncState = await syncUtcTime(timeSourceId);
+      if (isLatestSyncRequest(requestId, latestSyncRequestIdRef.current)) {
+        setSyncState(nextSyncState);
+      }
     } catch (error) {
+      if (!isLatestSyncRequest(requestId, latestSyncRequestIdRef.current)) {
+        return;
+      }
+
       const lastFailureAt = Date.now();
       const lastFailureDetails = getSyncErrorMessage(error);
       setSyncState((currentState) =>
@@ -32,13 +48,13 @@ export function useClock(timeSourceId: string) {
 
     const tickId = window.setInterval(() => {
       setRenderNow(Date.now());
-    }, TICK_INTERVAL_MS);
+    }, showMilliseconds ? MILLIS_TICK_INTERVAL_MS : TICK_INTERVAL_MS);
 
     return () => {
       window.clearInterval(syncId);
       window.clearInterval(tickId);
     };
-  }, [syncOnce]);
+  }, [showMilliseconds, syncOnce]);
 
   return {
     now: new Date(renderNow + syncState.offsetMs),

@@ -1,7 +1,8 @@
+mod sntp;
+
 use chrono::{DateTime, NaiveDateTime};
 use serde::Serialize;
 use serde_json::Value;
-use std::net::UdpSocket;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 #[derive(Debug, Serialize)]
@@ -108,9 +109,6 @@ const TIME_SOURCES: &[TimeSource] = &[
     },
 ];
 
-const NTP_UNIX_EPOCH_OFFSET_SECONDS: u64 = 2_208_988_800;
-const NTP_FRACTION_SCALE: f64 = 4_294_967_296.0;
-
 fn source_kind_label(kind: TimeSourceKind) -> &'static str {
     match kind {
         TimeSourceKind::Ntp { .. } => "ntp",
@@ -124,57 +122,6 @@ fn now_ms() -> Result<i64, String> {
         .map_err(|error| format!("system time is before Unix epoch: {error}"))?;
 
     Ok(duration.as_millis() as i64)
-}
-
-fn read_ntp_timestamp_ms(bytes: &[u8]) -> Result<f64, String> {
-    if bytes.len() < 8 {
-        return Err("NTP timestamp is shorter than 8 bytes".to_string());
-    }
-
-    let seconds = u32::from_be_bytes([bytes[0], bytes[1], bytes[2], bytes[3]]) as u64;
-    let fraction = u32::from_be_bytes([bytes[4], bytes[5], bytes[6], bytes[7]]) as f64;
-
-    if seconds == 0 && fraction == 0.0 {
-        return Err("NTP timestamp is empty".to_string());
-    }
-
-    if seconds < NTP_UNIX_EPOCH_OFFSET_SECONDS {
-        return Err("NTP timestamp is before Unix epoch".to_string());
-    }
-
-    let unix_seconds = seconds - NTP_UNIX_EPOCH_OFFSET_SECONDS;
-    Ok((unix_seconds as f64 * 1000.0) + ((fraction * 1000.0) / NTP_FRACTION_SCALE))
-}
-
-fn write_ntp_timestamp_ms(ms: f64, bytes: &mut [u8]) -> Result<(), String> {
-    if bytes.len() < 8 {
-        return Err("NTP timestamp target is shorter than 8 bytes".to_string());
-    }
-    if !ms.is_finite() || ms < 0.0 {
-        return Err("NTP timestamp source is invalid".to_string());
-    }
-
-    let unix_seconds = (ms / 1000.0).floor() as u64;
-    let fraction_ms = ms - (unix_seconds as f64 * 1000.0);
-    let mut ntp_seconds = unix_seconds + NTP_UNIX_EPOCH_OFFSET_SECONDS;
-    let mut fraction = ((fraction_ms / 1000.0) * NTP_FRACTION_SCALE).round() as u64;
-
-    if fraction >= (1_u64 << 32) {
-        ntp_seconds += 1;
-        fraction = 0;
-    }
-
-    bytes[0..4].copy_from_slice(&(ntp_seconds as u32).to_be_bytes());
-    bytes[4..8].copy_from_slice(&(fraction as u32).to_be_bytes());
-    Ok(())
-}
-
-fn calculate_sntp_metrics(t1_ms: f64, t2_ms: f64, t3_ms: f64, t4_ms: f64) -> (f64, f64, f64) {
-    let offset_ms = ((t2_ms - t1_ms) + (t3_ms - t4_ms)) / 2.0;
-    let delay_ms = ((t4_ms - t1_ms) - (t3_ms - t2_ms)).max(0.0);
-    let estimated_error_ms = (delay_ms / 2.0).max(1.0);
-
-    (offset_ms, delay_ms, estimated_error_ms)
 }
 
 fn parse_datetime_ms(value: &str) -> Option<i64> {
@@ -250,54 +197,6 @@ fn extract_epoch_ms(value: &Value) -> Option<i64> {
     }
 }
 
-fn query_ntp_source(source: &TimeSource, host: &str) -> Result<TimeSyncResponse, String> {
-    let socket = UdpSocket::bind("0.0.0.0:0").map_err(|error| format!("{} UDP bind failed: {error}", source.name))?;
-
-    socket
-        .set_read_timeout(Some(Duration::from_secs(4)))
-        .map_err(|error| format!("{} read timeout setup failed: {error}", source.name))?;
-    socket
-        .set_write_timeout(Some(Duration::from_secs(4)))
-        .map_err(|error| format!("{} write timeout setup failed: {error}", source.name))?;
-    socket
-        .connect(host)
-        .map_err(|error| format!("{} connect failed: {error}", source.name))?;
-
-    let mut request = [0_u8; 48];
-    request[0] = 0x1b;
-    let t1_ms = now_ms()? as f64;
-    write_ntp_timestamp_ms(t1_ms, &mut request[40..48])
-        .map_err(|error| format!("{} request timestamp failed: {error}", source.name))?;
-
-    socket
-        .send(&request)
-        .map_err(|error| format!("{} request send failed: {error}", source.name))?;
-
-    let mut response = [0_u8; 48];
-    let received = socket
-        .recv(&mut response)
-        .map_err(|error| format!("{} response receive failed: {error}", source.name))?;
-    let t4_ms = now_ms()? as f64;
-
-    if received < response.len() {
-        return Err(format!("{} returned a short NTP packet: {received} bytes", source.name));
-    }
-
-    let t2_ms = read_ntp_timestamp_ms(&response[32..40])
-        .map_err(|error| format!("{} receive timestamp failed: {error}", source.name))?;
-    let t3_ms = read_ntp_timestamp_ms(&response[40..48])
-        .map_err(|error| format!("{} transmit timestamp failed: {error}", source.name))?;
-    let (offset_ms, delay_ms, estimated_error_ms) = calculate_sntp_metrics(t1_ms, t2_ms, t3_ms, t4_ms);
-
-    Ok(TimeSyncResponse {
-        offset_ms,
-        delay_ms,
-        estimated_error_ms,
-        source_name: source.name.to_string(),
-        source_host: host.to_string(),
-    })
-}
-
 async fn query_http_json_source(
     client: &reqwest::Client,
     source: &TimeSource,
@@ -323,8 +222,12 @@ async fn query_http_json_source(
         .json::<Value>()
         .await
         .map_err(|error| format!("{} JSON parse failed: {error}", source.name))?;
-    let utc_ms = extract_epoch_ms(&payload)
-        .ok_or_else(|| format!("{} response did not contain a recognizable timestamp", source.name))?;
+    let utc_ms = extract_epoch_ms(&payload).ok_or_else(|| {
+        format!(
+            "{} response did not contain a recognizable timestamp",
+            source.name
+        )
+    })?;
     let captured_at_ms = request_start_ms + ((request_end_ms - request_start_ms) / 2);
     let delay_ms = round_trip_ms.max(0.0);
 
@@ -375,7 +278,7 @@ pub async fn sync_utc_time(source_id: Option<String>) -> Result<TimeSyncResponse
 
     for source in sources {
         let result = match source.kind {
-            TimeSourceKind::Ntp { host } => query_ntp_source(source, host),
+            TimeSourceKind::Ntp { host } => sntp::query_ntp_source(source.name, host),
             TimeSourceKind::HttpJson { url } => query_http_json_source(&client, source, url).await,
         };
 
@@ -385,31 +288,8 @@ pub async fn sync_utc_time(source_id: Option<String>) -> Result<TimeSyncResponse
         }
     }
 
-    Err(format!("UTC time synchronization failed: {}", errors.join("; ")))
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn ntp_timestamp_round_trips_unix_milliseconds() {
-        let source_ms = 1_700_000_000_123.0;
-        let mut bytes = [0_u8; 8];
-
-        write_ntp_timestamp_ms(source_ms, &mut bytes).expect("timestamp write should succeed");
-        let parsed_ms = read_ntp_timestamp_ms(&bytes).expect("timestamp read should succeed");
-
-        assert!((parsed_ms - source_ms).abs() < 0.001);
-    }
-
-    #[test]
-    fn calculates_sntp_offset_and_delay_from_four_timestamps() {
-        let (offset_ms, delay_ms, estimated_error_ms) =
-            calculate_sntp_metrics(1_000.0, 1_120.0, 1_130.0, 1_210.0);
-
-        assert_eq!(offset_ms, 20.0);
-        assert_eq!(delay_ms, 200.0);
-        assert_eq!(estimated_error_ms, 100.0);
-    }
+    Err(format!(
+        "UTC time synchronization failed: {}",
+        errors.join("; ")
+    ))
 }

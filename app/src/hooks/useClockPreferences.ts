@@ -6,6 +6,7 @@ const PREFERENCES_STORAGE_KEY = "vibe-time.preferences";
 
 export type ClockPreferences = {
   showSeconds: boolean;
+  showMilliseconds: boolean;
   hourMode: ClockHourMode;
   timeSourceId: string;
   zenMode: boolean;
@@ -13,6 +14,7 @@ export type ClockPreferences = {
 
 export const DEFAULT_PREFERENCES: ClockPreferences = {
   showSeconds: true,
+  showMilliseconds: false,
   hourMode: "24",
   timeSourceId: AUTO_TIME_SOURCE_ID,
   zenMode: false,
@@ -29,6 +31,7 @@ export function normalizePreferences(value: unknown): ClockPreferences {
   const record = value as Partial<ClockPreferences>;
   return {
     showSeconds: typeof record.showSeconds === "boolean" ? record.showSeconds : DEFAULT_PREFERENCES.showSeconds,
+    showMilliseconds: typeof record.showMilliseconds === "boolean" ? record.showMilliseconds : DEFAULT_PREFERENCES.showMilliseconds,
     hourMode: record.hourMode === "12" || record.hourMode === "24" ? record.hourMode : DEFAULT_PREFERENCES.hourMode,
     timeSourceId: typeof record.timeSourceId === "string" ? record.timeSourceId : DEFAULT_PREFERENCES.timeSourceId,
     zenMode: typeof record.zenMode === "boolean" ? record.zenMode : DEFAULT_PREFERENCES.zenMode,
@@ -73,6 +76,10 @@ export function useClockPreferences() {
     preferences,
     setShowSeconds: useCallback(
       (showSeconds: boolean) => setPreferences((currentPreferences) => ({ ...currentPreferences, showSeconds })),
+      [setPreferences],
+    ),
+    setShowMilliseconds: useCallback(
+      (showMilliseconds: boolean) => setPreferences((currentPreferences) => ({ ...currentPreferences, showMilliseconds })),
       [setPreferences],
     ),
     setHourMode: useCallback(

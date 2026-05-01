@@ -17,8 +17,8 @@ const SHOW_INTERACTION_PROBE = import.meta.env.VITE_INTERACTION_PROBE === "1";
 
 export default function ClockPage() {
   const { activeCity, activeCityKey, setActiveCityKey } = useSelectedCity();
-  const { preferences, setShowSeconds, setHourMode, setTimeSourceId, setZenMode } = useClockPreferences();
-  const { now, syncState, syncOnce } = useClock(preferences.timeSourceId);
+  const { preferences, setShowSeconds, setShowMilliseconds, setHourMode, setTimeSourceId, setZenMode } = useClockPreferences();
+  const { now, syncState, syncOnce } = useClock(preferences.timeSourceId, preferences.showMilliseconds);
   const [timeSources, setTimeSources] = useState<TimeSourceOption[]>([]);
 
   useEffect(() => {
@@ -88,12 +88,14 @@ export default function ClockPage() {
         <SettingsPanel
           activeCityKey={activeCityKey}
           showSeconds={preferences.showSeconds}
+          showMilliseconds={preferences.showMilliseconds}
           hourMode={preferences.hourMode}
           timeSourceId={preferences.timeSourceId}
           timeSources={timeSources}
           zenMode={preferences.zenMode}
           onSelectCity={setActiveCityKey}
           onShowSecondsChange={setShowSeconds}
+          onShowMillisecondsChange={setShowMilliseconds}
           onHourModeChange={setHourMode}
           onTimeSourceChange={setTimeSourceId}
           onZenModeChange={setZenMode}
